@@ -61,7 +61,7 @@ public class DMRC_List_Adpater extends RecyclerView.Adapter<DMRC_List_Adpater.Pr
     public void onBindViewHolder(DMRC_List_Adpater.ProdectViewHolder holder, int position) {
 
         final DMRC_Customer_CardVO pro=productslist.get(position);
-        holder.name.setText("  "+pro.getCustomerName());12
+        holder.name.setText("  "+pro.getCustomerName()); //"uav"
         holder.status.setText("  "+pro.getDmrccardStaus().getStatusName());
         holder.cardnumber.setText("Card No. \n"+pro.getCardNo());
 
