@@ -197,7 +197,6 @@ public class Splash_Screen extends AppCompatActivity implements BitmapInterface 
 
         }
 
-
          bannerList = (JsonArray) new Gson().toJsonTree(slBannerVos,
                 new TypeToken<List<BannerVO>>() {
                 }.getType());

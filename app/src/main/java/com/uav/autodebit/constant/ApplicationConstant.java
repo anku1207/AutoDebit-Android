@@ -17,7 +17,7 @@ public class ApplicationConstant {
 
     public final static String AUTHKEY= "G4s4cCMx2aM7lky1";
 
-    public final static  boolean IS_PRODUCTION_ENVIRONMENT=true;
+    public final static  boolean IS_PRODUCTION_ENVIRONMENT=false;
 
     public final static  String SI_SERVICE="avenue";
 
@@ -25,10 +25,7 @@ public class ApplicationConstant {
     public final static String HTTPURL = URL_ADDRESS +":8080/hundi/rest/stateless/";
     public final static String URL_APACHE_PAGES = URL_ADDRESS + "/autodebit/";
     // public final static String HTTPURL = "http://192.168.1.12:8080/hundi/rest/stateless/";
-
-  //  public final static String HTTPURL ="http://test.autodebit.in:8080/hundi/rest/stateless/";
-
-
+    //public final static String HTTPURL ="http://test.autodebit.in:8080/hundi/rest/stateless/";
 
     public static final String MOBILE_SERVICE = "mobileservice";
     public static final String PNG_SERVICE = "pngservice";
@@ -109,7 +106,7 @@ public class ApplicationConstant {
            return "http://autope.in";
         }else{
            // return  "http://205.147.103.18" ;
-            return "http://192.168.1.12";
+            return "http://192.168.1.11";
         }
 
 
