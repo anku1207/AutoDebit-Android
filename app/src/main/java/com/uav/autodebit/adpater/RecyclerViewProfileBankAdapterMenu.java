@@ -1,5 +1,6 @@
 package com.uav.autodebit.adpater;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,10 +9,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.uav.autodebit.Activity.Enach_Mandate;
+import com.uav.autodebit.Activity.Profile_Activity;
 import com.uav.autodebit.R;
+import com.uav.autodebit.util.DialogInterface;
 import com.uav.autodebit.util.Utility;
 import com.uav.autodebit.vo.ServiceTypeVO;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -52,19 +60,13 @@ public class RecyclerViewProfileBankAdapterMenu extends RecyclerView.Adapter<Rec
          holder.imageView.setImageDrawable(Utility.GetImage(mctx,pro.getAppIcon()));
          holder.mainlayout.setEnabled(true);
 
-        /* holder.mailmenu.setOnClickListener(new View.OnClickListener() {
+
+         holder.mainlayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-               if(pro.getActivityname()!=null){
-                   mctx.startActivity(new Intent(mctx,pro.getActivityname()));
-               }else {
-                   Toast.makeText(mctx, "Something is wrong ", Toast.LENGTH_SHORT).show();
-               }
-
-
+                  ((Profile_Activity)mctx).bankDetails(pro.getAnonymousInteger());
             }
-        });*/
+        });
 
 
 

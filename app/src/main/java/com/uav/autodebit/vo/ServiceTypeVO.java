@@ -2,7 +2,7 @@ package com.uav.autodebit.vo;
 
 import java.io.Serializable;
 
-public class ServiceTypeVO implements Serializable {
+public class ServiceTypeVO  extends BaseVO implements Serializable {
 
     private Integer serviceTypeId;
     private String  code;

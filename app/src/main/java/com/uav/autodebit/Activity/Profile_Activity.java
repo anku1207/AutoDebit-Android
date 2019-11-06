@@ -62,6 +62,7 @@ import com.uav.autodebit.util.DownloadTask;
 import com.uav.autodebit.util.FileDownloadInterface;
 import com.uav.autodebit.util.Utility;
 import com.uav.autodebit.vo.ConnectionVO;
+import com.uav.autodebit.vo.CustomerAuthServiceVO;
 import com.uav.autodebit.vo.CustomerStatusVO;
 import com.uav.autodebit.vo.CustomerVO;
 import com.uav.autodebit.vo.DataAdapterVO;
@@ -626,11 +627,9 @@ public class Profile_Activity extends AppCompatActivity implements FileDownloadI
                         JSONObject object =bankArry.getJSONObject(i);
                         serviceTypeVO.setTitle(object.getString("bankName")+" \n"+object.getString("accountNumber"));
                         serviceTypeVO.setAppIcon("bankicon.png");
+                        serviceTypeVO.setAnonymousInteger(object.getInt("customerAuthId"));
                         bankServiceList.add(serviceTypeVO);
                     }
-
-
-
 
                     LocalCacheVO localCacheVO = gson.fromJson(customerVO.getLocalCache(), LocalCacheVO.class);
                     List<ServiceTypeVO> serviceautope = localCacheVO.getUtilityBills();
@@ -718,5 +717,91 @@ public class Profile_Activity extends AppCompatActivity implements FileDownloadI
         });
     }
 
+    public void bankDetails(int customerAuthId){
 
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        ConnectionVO connectionVO = CustomerBO.cutomerBankDetails();
+
+        CustomerVO customerVO =new CustomerVO();
+        customerVO.setCustomerId(Integer.parseInt(Session.getCustomerId(Profile_Activity.this)));
+
+        CustomerAuthServiceVO customerAuthServiceVO=new CustomerAuthServiceVO();
+        customerAuthServiceVO.setCustomerAuthId(customerAuthId);
+        customerAuthServiceVO.setCustomer(customerVO);
+
+
+        Gson gson = new Gson();
+        String json = gson.toJson(customerAuthServiceVO);
+        params.put("volley", json);
+        connectionVO.setParams(params);
+
+        VolleyUtils.makeJsonObjectRequest(this,connectionVO , new VolleyResponseListener() {
+            @Override
+            public void onError(String message) {
+            }
+            @Override
+            public void onResponse(Object resp) throws JSONException {
+                JSONObject response = (JSONObject) resp;
+                Gson gson = new Gson();
+                CustomerAuthServiceVO customerAuthServiceVO = gson.fromJson(response.toString(), CustomerAuthServiceVO.class);
+
+
+                if(customerAuthServiceVO.getStatusCode().equals("400")){
+                    ArrayList error = (ArrayList) customerAuthServiceVO.getErrorMsgs();
+                    StringBuilder sb = new StringBuilder();
+                    for(int i=0; i<error.size(); i++){
+                        sb.append(error.get(i)).append("\n");
+                    }
+                    Utility.alertDialog(Profile_Activity.this,"Alert",sb.toString(),"Ok");
+
+                }else {
+                    try {
+                        showBankDetailsDialog(customerAuthServiceVO);
+                    }catch (Exception e){
+                        Utility.exceptionAlertDialog(Profile_Activity.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+                    }
+
+
+                }
+            }
+        });
+
+    }
+
+    public void showBankDetailsDialog(CustomerAuthServiceVO customerAuthServiceVO) throws Exception{
+
+
+            String[] changePass = {"Cancel","Modify"};
+            JSONArray jsonArray=new JSONArray();
+            JSONObject object =new JSONObject();
+            object.put("key","Bank Name");
+            object.put("value",customerAuthServiceVO.getBankName());
+            jsonArray.put(object);
+
+            object =new JSONObject();
+            object.put("key","Account No");
+            object.put("value",customerAuthServiceVO.getAccountNumber());
+            jsonArray.put(object);
+
+            object =new JSONObject();
+            object.put("key","Status");
+            object.put("value",customerAuthServiceVO.getAuthStatus().getStatusName());
+            jsonArray.put(object);
+
+            object =new JSONObject();
+            object.put("key","Mandate Amount");
+            object.put("value",customerAuthServiceVO.getMandateAmount());
+            jsonArray.put(object);
+
+            Utility.confirmationDialog(new DialogInterface() {
+                @Override
+                public void confirm(Dialog dialog) {
+                    dialog.dismiss();
+                }
+                @Override
+                public void modify(Dialog dialog) {
+                    dialog.dismiss();
+                }
+            },Profile_Activity.this,jsonArray,null,"Bank Detail",changePass);
+    }
 }
