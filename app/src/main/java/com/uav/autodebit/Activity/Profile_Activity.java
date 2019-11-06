@@ -802,6 +802,6 @@ public class Profile_Activity extends AppCompatActivity implements FileDownloadI
                 public void modify(Dialog dialog) {
                     dialog.dismiss();
                 }
-            },Profile_Activity.this,jsonArray,null,"Bank Detail",changePass);///dgdfgdg
+            },Profile_Activity.this,jsonArray,null,"Bank Detail",changePass);
     }
 }
