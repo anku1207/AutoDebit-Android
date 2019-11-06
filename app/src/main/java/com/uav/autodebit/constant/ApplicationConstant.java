@@ -17,7 +17,7 @@ public class ApplicationConstant {
 
     public final static String AUTHKEY= "G4s4cCMx2aM7lky1";
 
-    public final static  boolean IS_PRODUCTION_ENVIRONMENT=false;
+    public final static  boolean IS_PRODUCTION_ENVIRONMENT=true;
 
     public final static  String SI_SERVICE="avenue";
 
