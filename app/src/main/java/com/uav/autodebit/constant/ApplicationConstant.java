@@ -106,7 +106,7 @@ public class ApplicationConstant {
            return "http://autope.in";
         }else{
            // return  "http://205.147.103.18" ;
-            return "http://192.168.1.20";
+            return "http://192.168.1.11";
         }
 
 
