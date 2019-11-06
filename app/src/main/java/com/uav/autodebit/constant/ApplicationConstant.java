@@ -19,6 +19,9 @@ public class ApplicationConstant {
 
     public final static  boolean IS_PRODUCTION_ENVIRONMENT=true;
 
+
+
+    
     public final static  String SI_SERVICE="avenue";
 
     public final static String URL_ADDRESS = getServerAddress();
