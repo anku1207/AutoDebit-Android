@@ -47,6 +47,7 @@ import com.uav.autodebit.BO.SignUpBO;
 import com.uav.autodebit.R;
 import com.uav.autodebit.adpater.ListViewItemCheckboxBaseAdapter;
 import com.uav.autodebit.adpater.RecyclerViewAdapterMenu;
+import com.uav.autodebit.adpater.RecyclerViewProfileBankAdapterMenu;
 import com.uav.autodebit.adpater.UitilityAdapter;
 import com.uav.autodebit.androidFragment.Home_Menu;
 import com.uav.autodebit.androidFragment.Profile;
@@ -628,6 +629,9 @@ public class Profile_Activity extends AppCompatActivity implements FileDownloadI
                         bankServiceList.add(serviceTypeVO);
                     }
 
+
+
+
                     LocalCacheVO localCacheVO = gson.fromJson(customerVO.getLocalCache(), LocalCacheVO.class);
                     List<ServiceTypeVO> serviceautope = localCacheVO.getUtilityBills();
 
@@ -666,8 +670,8 @@ public class Profile_Activity extends AppCompatActivity implements FileDownloadI
 
             @Override
             public void doPostExecute() {
-                recyclerViewAdapter=new RecyclerViewAdapterMenu(Profile_Activity.this, bankServiceList,R.layout.profile_service_design);
-                bankrecycler.setAdapter(recyclerViewAdapter);
+                RecyclerViewProfileBankAdapterMenu recyclerViewProfileBankAdapterMenu=new RecyclerViewProfileBankAdapterMenu(Profile_Activity.this, bankServiceList,R.layout.profile_bankservice_design);
+                bankrecycler.setAdapter(recyclerViewProfileBankAdapterMenu);
 
                 recyclerViewAdapter=new RecyclerViewAdapterMenu(Profile_Activity.this, addservice,R.layout.profile_service_design);
                 servicesrecy.setAdapter(recyclerViewAdapter);
