@@ -107,9 +107,10 @@ public class ApplicationConstant {
     private static String getServerAddress(){
         if(IS_PRODUCTION_ENVIRONMENT){
            return "http://autope.in";
+          //  return "http://164.52.192.45";
         }else{
-           // return  "http://205.147.103.18" ;
-            return "http://192.168.1.11";
+            return  "http://205.147.103.18" ;
+           // return "http://192.168.1.11";
         }
 
 
