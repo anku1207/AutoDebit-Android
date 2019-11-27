@@ -21,7 +21,7 @@ public class ApplicationConstant {
 
 
 
-    
+
     public final static  String SI_SERVICE="avenue";
 
     public final static String URL_ADDRESS = getServerAddress();
