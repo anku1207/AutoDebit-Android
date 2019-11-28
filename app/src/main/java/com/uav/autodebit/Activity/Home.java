@@ -367,6 +367,7 @@ public class Home extends AppCompatActivity
         if(level< selectedService.getLevel().getLevelId()){
             pd.dismiss();
             level++;
+            String[] changePass = {"Cancel","Next"};
             switch (level){
                 case 2:
                     startActivity(new Intent(Home.this, PanVerification.class));
@@ -385,7 +386,7 @@ public class Home extends AppCompatActivity
                         public void modify(Dialog dialog) {
                             dialog.dismiss();
                         }
-                    }, Home.this, null, "Bank Verification","Mandate");
+                    }, Home.this, null, "Bank Verification","Mandate",changePass);
                     break;
                 case 5:
                     Utility.confirmationDialog(new DialogInterface() {
@@ -398,7 +399,7 @@ public class Home extends AppCompatActivity
                         public void modify(Dialog dialog) {
                             dialog.dismiss();
                         }
-                    }, Home.this, null, "Bank Verification","Mandate");
+                    }, Home.this, null, "Bank Verification","Mandate",changePass);
                     break;
                 case 6:
 
@@ -412,7 +413,7 @@ public class Home extends AppCompatActivity
                         public void modify(Dialog dialog) {
                             dialog.dismiss();
                         }
-                    }, Home.this, null, "SI Verification","Mandate");
+                    }, Home.this, null, "SI Verification","Mandate",changePass);
 
                     break;
             }

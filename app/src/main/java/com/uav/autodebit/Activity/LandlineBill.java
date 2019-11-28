@@ -42,7 +42,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LandlineBill extends AppCompatActivity /*implements View.OnClickListener*/ {
+public class LandlineBill extends AppCompatActivity implements View.OnClickListener {
     EditText amount,operator;
     ImageView back_activity_button;
     String operatorcode,operatorname=null;
@@ -57,9 +57,8 @@ public class LandlineBill extends AppCompatActivity /*implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.summary);
+        setContentView(R.layout.activity_landline_bill);
         getSupportActionBar().hide();
-/*
         amount=findViewById(R.id.amount);
         back_activity_button=findViewById(R.id.back_activity_button1);
 
@@ -93,10 +92,10 @@ public class LandlineBill extends AppCompatActivity /*implements View.OnClickLis
                 }
                 return false;
             }
-        });*/
+        });
     }
 
-   /* public ArrayList<DataAdapterVO> getDataList(){
+    public ArrayList<DataAdapterVO> getDataList(){
         ArrayList<DataAdapterVO> datalist = new ArrayList<>();
         String operator= Session.getSessionByKey(LandlineBill.this,Session.CACHE_LANDLINE_OPERATOR);
         try {
@@ -123,9 +122,6 @@ public class LandlineBill extends AppCompatActivity /*implements View.OnClickLis
         super.onActivityResult(requestCode, resultCode, data);
 
         try{
-
-
-
             if(resultCode==RESULT_OK){
                 switch (requestCode) {
                     case 100:
@@ -170,32 +166,19 @@ public class LandlineBill extends AppCompatActivity /*implements View.OnClickLis
                                     TextView tv = Utility.getTextView(this, oxigenQuestionsVO.getInstructions());
                                     dynamicCardViewContainer.addView(tv);
                                 }
-
-
                                 oxigenQuestionsVO.setElementId(et.getId());
                                 questionsVOS.add(oxigenQuestionsVO);
                             }
                         }
 
                         break;
-
-
-
                 }
             }
         }catch (Exception e){
-
         }
     }
 
-
-
-
-
-
-
-
-        @Override
+    @Override
     public void onClick(View view) {
 
         try {
@@ -313,5 +296,5 @@ public class LandlineBill extends AppCompatActivity /*implements View.OnClickLis
        }
 
        return valid;
-    }*/
+    }
 }
