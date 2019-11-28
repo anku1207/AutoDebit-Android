@@ -28,7 +28,8 @@
         android:requiredFeature="false"/>
 
 
-    <application
+
+      <application
         android:name=".constant.GlobalApplication"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
@@ -41,7 +42,7 @@
         android:usesCleartextTraffic="true"
         android:fullBackupContent="@xml/backup_descriptor"
 
-        
+
         >
         <activity android:name=".Activity.ChangePassword"></activity>
         <activity android:name=".Activity.IRCTC" />

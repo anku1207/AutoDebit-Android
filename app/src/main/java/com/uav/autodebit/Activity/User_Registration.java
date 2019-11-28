@@ -145,6 +145,9 @@ public class User_Registration extends AppCompatActivity {
         customerVO.setMobileNumber(userphone.getText().toString().trim());
         customerVO.setName(username.getText().toString().trim());
 
+        //28-11-2019
+        customerVO.setTokenId(Session.getSessionByKey(this,Session.CACHE_TOKENID));
+
         Gson gson = new Gson();
         String json = gson.toJson(customerVO);
         params.put("volley", json);

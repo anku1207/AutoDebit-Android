@@ -35,6 +35,7 @@ public class CustomerVO extends BaseVO implements Serializable {
         private Long mobileVerified;
         private String panHolderName;
         private String cirMobileNumber;
+        private String tokenId;
 
 
 
@@ -242,5 +243,13 @@ public class CustomerVO extends BaseVO implements Serializable {
 
         public void setCirMobileNumber(String cirMobileNumber) {
                 this.cirMobileNumber = cirMobileNumber;
+        }
+
+        public String getTokenId() {
+                return tokenId;
+        }
+
+        public void setTokenId(String tokenId) {
+                this.tokenId = tokenId;
         }
 }

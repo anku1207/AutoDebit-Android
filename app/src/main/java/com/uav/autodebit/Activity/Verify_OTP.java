@@ -56,7 +56,7 @@ public class Verify_OTP extends AppCompatActivity implements  TextWatcher,View.O
     CountDownTimer emailtime = null;
     private EditText phone_pin_first_edittext,phone_pin_second_edittext,phone_pin_third_edittext,phone_pin_forth_edittext;
 
-    String userid,useridtype;
+    String userid,useridtype,tokenId;
     boolean resendotp=false;
 
     String methodname;
@@ -96,6 +96,10 @@ public class Verify_OTP extends AppCompatActivity implements  TextWatcher,View.O
             useridtype=customerVO.getLoginType();
             userid=customerVO.getUserid();
             methodname=customerVO.getActionname();
+
+            //28-11-2019
+            tokenId=Session.getSessionByKey(this,Session.CACHE_TOKENID);
+
 
             if(useridtype.equals("mobile")){
                 otp_send.setText("OTP has sent on "+Utility.maskString(customerVO.getMobileNumber(),3,7,'*'));
@@ -275,11 +279,16 @@ public class Verify_OTP extends AppCompatActivity implements  TextWatcher,View.O
 
         OTPVO otpvo =new OTPVO();
         otpvo.setOtp(getmobileotp());
+
+        //28-11-2019
+        otpvo.setAnonymousString(tokenId);
         if(type.equals("mobile")){
             otpvo.setMobileNo(userid);
         }else if(type.equals("email")){
             otpvo.setEmailId(userid);
         }
+
+
         Gson gson = new Gson();
         String json = gson.toJson(otpvo);
         params.put("volley", json);

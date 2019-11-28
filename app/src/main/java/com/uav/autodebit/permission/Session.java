@@ -33,7 +33,8 @@ public class Session {
 
     public final static String CACHE_IS_NEW_USER = "IS_NEW_USER";
     public final static String CACHE_USER_LOGINID = "USERLOGINID";
-
+    public final static String CACHE_TOKENID = "TOKENID";
+    public final static String CACHE_NOTIFICATION = "NOTIFICATION";
 
 
     public static String getCustomerId(Context context){

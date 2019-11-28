@@ -1,7 +1,10 @@
 package com.uav.autodebit.Activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +12,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
@@ -52,8 +60,44 @@ public class Splash_Screen extends AppCompatActivity implements BitmapInterface 
         ImageView imageView = (ImageView) findViewById( R.id.appstarticon);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        startDownloadCache();
 
+
+
+        if(!Utility.isNetworkAvailable(Splash_Screen.this)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(Splash_Screen.this);
+            builder.setMessage("Sorry, no Internet Connectivity detected. Please reconnect and try again ")
+                    .setTitle("No Internet Connection!")
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //do things
+                            android.os.Process.killProcess(android.os.Process.myPid());
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setCanceledOnTouchOutside(false);
+            alert.setCancelable(false);
+            alert.show();
+        }else {
+            FirebaseMessaging.getInstance().subscribeToTopic("global");
+            FirebaseInstanceId.getInstance().getInstanceId()
+                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                            if (!task.isSuccessful()) {
+                                Log.w( "getInstanceId failed", task.getException());
+                                return;
+                            }
+                            // Get new Instance ID token
+                            String token = task.getResult().getToken();
+                            Session.set_Data_Sharedprefence(Splash_Screen.this,Session.CACHE_TOKENID,token);
+                            Log.w("token",token);
+                        }
+                    });
+
+            startDownloadCache();
+        }
     }
 
 
@@ -151,10 +195,6 @@ public class Splash_Screen extends AppCompatActivity implements BitmapInterface 
                     }else {
                         startNextActivity();
                     }
-
-
-
-
 
                 }
             });

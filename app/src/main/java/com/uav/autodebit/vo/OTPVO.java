@@ -2,7 +2,7 @@ package com.uav.autodebit.vo;
 
 import java.io.Serializable;
 
-public class OTPVO implements Serializable {
+public class OTPVO extends BaseVO implements Serializable {
 
     public OTPVO(){
 
