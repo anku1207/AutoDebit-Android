@@ -174,9 +174,6 @@ public class Splash_Screen extends AppCompatActivity implements BitmapInterface 
 
 
 
-
-
-
                   /*  List<BitmapVO> bitmapVOs=new ArrayList<>();
                     for(int i=0 ; i<slBannerVos.size() ; i++){
                         BitmapVO bitmapVO =new BitmapVO();
