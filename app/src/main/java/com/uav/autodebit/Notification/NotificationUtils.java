@@ -107,14 +107,17 @@ public class NotificationUtils {
          NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Notification notification = mBuilder
+                   /* .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(message))*/
                     .setSmallIcon(icon).setTicker(title).setWhen(0)
-                    .setAutoCancel(false)
+                    .setAutoCancel(true)
                     .setContentTitle(title)
                     .setContentIntent(resultPendingIntent)
                     .setWhen(getTimeMilliSec(timeStamp))
                     .setSmallIcon(icon)
                     .setLargeIcon(smallicon)
-                    .setContentText(message).build();
+                    .setContentText(message)
+                    .build();
             getNotificationChannel(alarmSound,notificationManager);
             notificationManager.notify(count_notification, notification);
         }else {
@@ -123,7 +126,7 @@ public class NotificationUtils {
             inboxStyle.addLine(message);
 
             Notification notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
-                    .setAutoCancel(false)
+                    .setAutoCancel(true)
                     .setContentTitle(title)
                     .setContentIntent(resultPendingIntent)
                     .setSound(alarmSound)
@@ -168,34 +171,31 @@ public class NotificationUtils {
                     .setContentText(message).build();
             getNotificationChannel(alarmSound,notificationManager);
             notificationManager.notify(count_notification, notification);
+        }else {
+            NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
+            bigPictureStyle.setBigContentTitle(title);
+            bigPictureStyle.setSummaryText(Html.fromHtml(message).toString());
+            bigPictureStyle.bigPicture(bitmap);
+            Notification notification;
+            notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
+                    .setAutoCancel(true)
+                    .setContentTitle(title)
+                    .setContentIntent(resultPendingIntent)
+                    .setSound(alarmSound)
+                    .setStyle(bigPictureStyle)
+                    .setWhen(getTimeMilliSec(timeStamp))
+                    .setSmallIcon(icon)
+                    /* .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))*/
+                    .setLargeIcon(smallicon)
+                    .setContentText(message)
+                    .setVibrate(new long[]{0, 500, 1000})
+                    .setDefaults(Notification.DEFAULT_LIGHTS )
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+                    .build();
+            notificationManager.notify(count_notification, notification);
         }
-
-        NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
-        bigPictureStyle.setBigContentTitle(title);
-        bigPictureStyle.setSummaryText(Html.fromHtml(message).toString());
-        bigPictureStyle.bigPicture(bitmap);
-        Notification notification;
-        notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
-                .setAutoCancel(true)
-                .setContentTitle(title)
-                .setContentIntent(resultPendingIntent)
-                .setSound(alarmSound)
-                .setStyle(bigPictureStyle)
-                .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(icon)
-               /* .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), icon))*/
-                .setLargeIcon(smallicon)
-                .setContentText(message)
-                .setVibrate(new long[]{0, 500, 1000})
-                .setDefaults(Notification.DEFAULT_LIGHTS )
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-                .build();
-
-
-           notificationManager.notify(count_notification, notification);
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public  NotificationChannel getNotificationChannel(Uri alarmSound, NotificationManager notificationManager){
