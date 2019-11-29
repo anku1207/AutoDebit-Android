@@ -144,7 +144,7 @@ public class FCMService extends FirebaseMessagingService {
                 notificationUtils.playNotificationSound();
             } else {
                 // app is in background, show the notification in notification tray
-                Class <?>clazz = Class.forName(getApplicationContext().getPackageName()+".activity."+activityname);
+                Class <?>clazz = Class.forName(getApplicationContext().getPackageName()+".Activity."+activityname);
                 Intent resultIntent = new Intent(getApplicationContext(), clazz);
                 resultIntent.putExtra("message", message);
 

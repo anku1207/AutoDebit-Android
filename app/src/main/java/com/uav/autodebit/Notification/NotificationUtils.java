@@ -21,6 +21,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 
 import com.uav.autodebit.R;
@@ -34,6 +35,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -42,11 +44,14 @@ import java.util.List;
 public class NotificationUtils {
     private static String TAG = NotificationUtils.class.getSimpleName();
 
-    public static  String CHANNEL_ID ="MRP";
+    public static  String CHANNEL_ID ="1234";
+    public int count_notification=100;
 
     private Context mContext;
 
     public NotificationUtils(Context mContext) {
+        Random rand = new Random();
+        count_notification=rand.nextInt(100);
         this.mContext = mContext;
     }
 
@@ -58,7 +63,6 @@ public class NotificationUtils {
         // Check for empty push message
         if (TextUtils.isEmpty(message))
             return;
-
 
         // notification icon
         final int icon = R.drawable.autodebitlogo;
@@ -72,18 +76,12 @@ public class NotificationUtils {
         }
 
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        final PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        mContext,
-                        0,
-                        intent,
-                        PendingIntent.FLAG_CANCEL_CURRENT
+        final PendingIntent resultPendingIntent =PendingIntent.getActivity(mContext,0,intent,PendingIntent.FLAG_CANCEL_CURRENT
                 );
-
         final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(mContext,CHANNEL_ID);
 
-        Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
-                + "://" + mContext.getPackageName() + "/raw/notification");
+        Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + mContext.getPackageName() + "/" + R.raw.hundi);
+
 
         if (!TextUtils.isEmpty(imageUrl)) {
 
@@ -99,7 +97,7 @@ public class NotificationUtils {
             }
         } else {
             showSmallNotification(mBuilder, icon, title, message, timeStamp, resultPendingIntent, alarmSound,smallicon);
-            playNotificationSound();
+            //playNotificationSound();
         }
     }
 
@@ -108,28 +106,43 @@ public class NotificationUtils {
 
          NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification notification = mBuilder
+                    .setSmallIcon(icon).setTicker(title).setWhen(0)
+                    .setAutoCancel(false)
+                    .setContentTitle(title)
+                    .setContentIntent(resultPendingIntent)
+                    .setWhen(getTimeMilliSec(timeStamp))
+                    .setSmallIcon(icon)
+                    .setLargeIcon(smallicon)
+                    .setContentText(message).build();
             getNotificationChannel(alarmSound,notificationManager);
-        }
+            notificationManager.notify(count_notification, notification);
+        }else {
+            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
 
-        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+            inboxStyle.addLine(message);
 
-        inboxStyle.addLine(message);
+            Notification notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
+                    .setAutoCancel(false)
+                    .setContentTitle(title)
+                    .setContentIntent(resultPendingIntent)
+                    .setSound(alarmSound)
+                    .setStyle(inboxStyle)
+                    .setWhen(getTimeMilliSec(timeStamp))
+                    .setSmallIcon(icon)
+                    .setLargeIcon(smallicon)
+                    .setContentText(message)
+                    .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+                    .setDefaults(Notification.DEFAULT_LIGHTS )
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setLights(Color.RED, 3000, 3000)
+                    .build();
 
-        Notification notification;
-        notification = mBuilder.setSmallIcon(icon).setTicker(title).setWhen(0)
-                .setAutoCancel(true)
-                .setContentTitle(title)
-                .setContentIntent(resultPendingIntent)
-                .setSound(alarmSound)
-                .setStyle(inboxStyle)
-                .setWhen(getTimeMilliSec(timeStamp))
-                .setSmallIcon(icon)
-                .setLargeIcon(smallicon)
-                .setContentText(message)
-                .build();
+
+            notificationManager.notify(count_notification, notification);
+       }
 
 
-        notificationManager.notify(Config.NOTIFICATION_ID, notification);
     }
 
 
@@ -138,7 +151,23 @@ public class NotificationUtils {
 
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
+            bigPictureStyle.setBigContentTitle(title);
+            bigPictureStyle.bigPicture(bitmap);
+
+            Notification notification = mBuilder
+                    .setStyle(bigPictureStyle)
+                    .setSmallIcon(icon).setTicker(title).setWhen(0)
+                    .setAutoCancel(true)
+                    .setContentTitle(title)
+                    .setContentIntent(resultPendingIntent)
+                    .setWhen(getTimeMilliSec(timeStamp))
+                    .setSmallIcon(icon)
+                    .setLargeIcon(smallicon)
+                    .setContentText(message).build();
             getNotificationChannel(alarmSound,notificationManager);
+            notificationManager.notify(count_notification, notification);
         }
 
         NotificationCompat.BigPictureStyle bigPictureStyle = new NotificationCompat.BigPictureStyle();
@@ -164,16 +193,7 @@ public class NotificationUtils {
                 .build();
 
 
-
-
-
-
-
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            mBuilder.setSound(alarmSound);
-        }
-        notificationManager.notify(Config.NOTIFICATION_ID_BIG_IMAGE, notification);
+           notificationManager.notify(count_notification, notification);
     }
 
 
@@ -183,17 +203,18 @@ public class NotificationUtils {
 
         NotificationChannel mChannel=null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mChannel = new NotificationChannel(CHANNEL_ID, "MRP", NotificationManager.IMPORTANCE_HIGH);
-            mChannel.setLightColor(Color.GRAY);
+            mChannel = new NotificationChannel(CHANNEL_ID, "HUNDI", NotificationManager.IMPORTANCE_HIGH);
             mChannel.enableLights(true);
+            mChannel.setLightColor(Color.GRAY);
+            mChannel.setVibrationPattern(new long[]{0, 500, 1000});
+            mChannel.enableVibration(true);
             mChannel.setDescription("DESCRIPTION");
-            AudioAttributes audioAttributes = new AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+
+            AudioAttributes attributes = new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                     .build();
-            mChannel.setSound(alarmSound, audioAttributes);
+            mChannel.setSound(alarmSound, attributes);
         }
-
         if (notificationManager != null) {
             notificationManager.createNotificationChannel( mChannel );
         }
@@ -222,8 +243,7 @@ public class NotificationUtils {
     // Playing notification sound
     public void playNotificationSound() {
         try {
-            Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
-                    + "://" + mContext.getPackageName() + "/raw/notification");
+            Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + mContext.getPackageName() + "/" + R.raw.hundi);
             Ringtone r = RingtoneManager.getRingtone(mContext, alarmSound);
             r.play();
         } catch (Exception e) {
