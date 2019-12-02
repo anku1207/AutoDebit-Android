@@ -54,6 +54,12 @@ public class Session {
         return customerVO.getName();
     }
 
+    public static Double getCustomerHighestMandateAmount(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(ApplicationConstant.SHAREDPREFENCE, Context.MODE_PRIVATE);
+        CustomerVO customerVO=gson.fromJson(sharedPreferences.getString(Session.CACHE_CUSTOMER,null),CustomerVO.class);
+        return customerVO.getHighestMandateAmount();
+    }
+
     public static String getResponseURL(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(ApplicationConstant.SHAREDPREFENCE, Context.MODE_PRIVATE);
         CustomerVO customerVO=gson.fromJson(sharedPreferences.getString(Session.CACHE_CUSTOMER,null),CustomerVO.class);

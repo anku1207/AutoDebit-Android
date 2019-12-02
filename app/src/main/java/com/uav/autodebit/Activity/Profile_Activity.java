@@ -88,7 +88,7 @@ public class Profile_Activity extends AppCompatActivity implements FileDownloadI
 
     BottomNavigationView navigation;
     TextView usename,pannumber,mobileno,email,address,citystate,pincode,creditscore,changepass;
-    ImageView mobileverify,emailverify,addressverify,downloadreport,back_activity_button,more_service;
+    ImageView mobileverify,emailverify,addressverify,downloadreport,back_activity_button,more_service,more_bankadd;
     String cir_report;
 
     Context context =Profile_Activity.this;
@@ -104,7 +104,7 @@ public class Profile_Activity extends AppCompatActivity implements FileDownloadI
     RecyclerViewAdapterMenu recyclerViewAdapter;
 
     Uri mImageUri;
-    int  REQ_IMAGE=1001,REQ_GALLERY=1002;
+    int  REQ_IMAGE=1001,REQ_GALLERY=1002,REQ_ENACH_MANDATE=1003;
     Bitmap bmp;
 
     ConnectionVO customerProfileImage;
@@ -135,11 +135,13 @@ public class Profile_Activity extends AppCompatActivity implements FileDownloadI
         imageView1=findViewById(R.id.imageView1);
         progressBar=findViewById(R.id.progressBar);
         changepass=findViewById(R.id.changepass);
+        more_bankadd=findViewById(R.id.more_bankadd);
 
 
         back_activity_button.setOnClickListener(this);
         more_service.setOnClickListener(this);
         changepass.setOnClickListener(this);
+        more_bankadd.setOnClickListener(this);
 
 
         mobileverify=findViewById(R.id.mobileverify);
@@ -304,6 +306,9 @@ public class Profile_Activity extends AppCompatActivity implements FileDownloadI
                 },this,null,"Would you like change password ?","Please Confirm Detail",changePass);
 
                 break;
+            case R.id.more_bankadd:
+                startActivityForResult(new Intent(Profile_Activity.this,Enach_Mandate.class).putExtra("activity",getPackageName()+".Activity.Profile_Activity").putExtra("forresutl",true),REQ_ENACH_MANDATE);
+                break;
         }
     }
 
@@ -423,8 +428,8 @@ public class Profile_Activity extends AppCompatActivity implements FileDownloadI
                     imageView1.setImageBitmap(bmp);
                     View current = getCurrentFocus();
                     if (current != null) current.clearFocus();
-
                     setCustomerProfileImage();
+
                 }else if(requestCode==REQ_GALLERY){
                     Uri contentURI = data.getData();
                     bmp =VolleyUtils.grabImage(contentURI,this);
@@ -438,6 +443,8 @@ public class Profile_Activity extends AppCompatActivity implements FileDownloadI
                     setCustomerProfileImage();
                 }else if(requestCode==300){
                     Utility.showSingleButtonDialog(Profile_Activity.this,"","Success fully update ",false);
+                }else if(requestCode==REQ_ENACH_MANDATE){
+                    Toast.makeText(context, "sfdsdfsfd", Toast.LENGTH_SHORT).show();
                 }
             }
         }catch (Exception e) {

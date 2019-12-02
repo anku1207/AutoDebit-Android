@@ -21,6 +21,10 @@ public class ApplicationConstant {
 
 
 
+    public static int  REQ_ENACH_MANDATE=1003,REQ_ALLSERVICE=1004;
+
+
+
 
     public final static  String SI_SERVICE="avenue";
 
@@ -110,7 +114,7 @@ public class ApplicationConstant {
           //  return "http://164.52.192.45";
         }else{
            // return  "http://205.147.103.18" ;
-            return "http://192.168.1.34";
+            return "http://192.168.1.11";
         }
 
 

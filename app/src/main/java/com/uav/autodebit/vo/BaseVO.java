@@ -15,6 +15,8 @@ public class BaseVO {
     private String localCache;
     private String enachDetails;
 
+    private Integer serviceId;
+
 
 
 
@@ -98,5 +100,13 @@ public class BaseVO {
 
     public void setEnachDetails(String enachDetails) {
         this.enachDetails = enachDetails;
+    }
+
+    public Integer getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Integer serviceId) {
+        this.serviceId = serviceId;
     }
 }

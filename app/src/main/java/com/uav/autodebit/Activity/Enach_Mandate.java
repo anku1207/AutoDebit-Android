@@ -1,6 +1,7 @@
 package com.uav.autodebit.Activity;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -83,6 +84,8 @@ public class Enach_Mandate extends AppCompatActivity{
     int minamt=0;
 
 
+    boolean foractivity=false;
+
     List<String> paths = new ArrayList<String>();
 
     HashMap<String,String> selectbank=new HashMap<>();
@@ -113,7 +116,7 @@ public class Enach_Mandate extends AppCompatActivity{
             }
         });
 
-
+        foractivity=getIntent().getBooleanExtra("foractivity",true);
 
         /*maxamount.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bankicon, 0, R.drawable.edit, 0);
         maxamount.setEnabled(false);*/
@@ -160,6 +163,9 @@ public class Enach_Mandate extends AppCompatActivity{
             @Override
             public void onClick(View view) {
 
+
+
+
                 boolean validation=true;
 
                 if(acno.getText().toString().equals("")){
@@ -191,12 +197,14 @@ public class Enach_Mandate extends AppCompatActivity{
                 }
 
                 if(!validation) return;
+                try {
 
 
+                    verifydialog();
+                }catch (Exception e){
+                    Log.w("error_enach",e.getMessage());
+                }
 
-
-
-                verifydialog();
 
               //  mandatebank();
             }
@@ -204,7 +212,7 @@ public class Enach_Mandate extends AppCompatActivity{
 
     }
 
-    public void verifydialog(){
+    public void verifydialog() throws Exception{
 
         try{
             JSONArray jsonArray=new JSONArray();
@@ -227,6 +235,7 @@ public class Enach_Mandate extends AppCompatActivity{
                 @Override
                 public void confirm(Dialog dialog) {
                     dialog.dismiss();
+
                     mandatebank();
                 }
 
@@ -426,10 +435,17 @@ public class Enach_Mandate extends AppCompatActivity{
                 }else {
                     String json = gson.toJson(customerVO);
                     Session.set_Data_Sharedprefence(Enach_Mandate.this,Session.CACHE_CUSTOMER,json);
-
-                   // startActivity(new Intent(Enach_Mandate.this,Paynimo_HDFC.class));
-                    startActivity(new Intent(Enach_Mandate.this,SI_First_Data.class));
+                    // startActivity(new Intent(Enach_Mandate.this,Paynimo_HDFC.class));
+                    if (!foractivity) {
+                        startActivity(new Intent(Enach_Mandate.this,SI_First_Data.class));
+                    }else {
+                        Intent intent =new Intent();
+                        setResult(Activity.RESULT_OK,intent);
+                    }
                     finish();
+
+
+
 
                 }
             }

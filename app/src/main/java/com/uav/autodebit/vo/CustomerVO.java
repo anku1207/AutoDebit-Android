@@ -36,6 +36,7 @@ public class CustomerVO extends BaseVO implements Serializable {
         private String panHolderName;
         private String cirMobileNumber;
         private String tokenId;
+        private Double highestMandateAmount;
 
 
 
@@ -251,5 +252,13 @@ public class CustomerVO extends BaseVO implements Serializable {
 
         public void setTokenId(String tokenId) {
                 this.tokenId = tokenId;
+        }
+
+        public Double getHighestMandateAmount() {
+                return highestMandateAmount;
+        }
+
+        public void setHighestMandateAmount(Double highestMandateAmount) {
+                this.highestMandateAmount = highestMandateAmount;
         }
 }

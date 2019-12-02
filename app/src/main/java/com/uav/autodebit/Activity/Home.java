@@ -312,7 +312,7 @@ public class Home extends AppCompatActivity
             final ImageView activeservice=galView.findViewById(R.id.serviceactive);
             img.setImageDrawable(Utility.GetImage(this,serviceTypeVO.getAppIcon()));
 
-             if(serviceTypeVO.getAdopted()==1){
+            if(serviceTypeVO.getAdopted()==1 && serviceTypeVO.getMandateAmount()<=Session.getCustomerHighestMandateAmount(this)){
                 activeservice.setVisibility(View.VISIBLE);
             }else {
                 activeservice.setVisibility(View.GONE);
@@ -380,7 +380,7 @@ public class Home extends AppCompatActivity
                         @Override
                         public void confirm(Dialog dialog) {
                             dialog.dismiss();
-                            startActivity(new Intent(Home.this, Enach_Mandate.class));
+                            startActivity(new Intent(Home.this, Enach_Mandate.class).putExtra("activity",getPackageName()+".Activity.SI_First_Data").putExtra("forresutl",false));
                         }
                         @Override
                         public void modify(Dialog dialog) {
@@ -393,7 +393,7 @@ public class Home extends AppCompatActivity
                         @Override
                         public void confirm(Dialog dialog) {
                             dialog.dismiss();
-                            startActivity(new Intent(Home.this, Enach_Mandate.class));
+                            startActivity(new Intent(Home.this, Enach_Mandate.class).putExtra("activity",getPackageName()+".Activity.SI_First_Data").putExtra("forresutl",false));
                         }
                         @Override
                         public void modify(Dialog dialog) {
@@ -516,9 +516,7 @@ public class Home extends AppCompatActivity
                     }
                 }
                // loadFragment(new Home_Menu());
-            }
-
-            if(requestCode==100){
+            }else if(requestCode==100){
                 loadDateInRecyclerView();
                 LocalCacheVO  localCacheVO = new Gson().fromJson( Session.getSessionByKey(this, Session.LOCAL_CACHE), LocalCacheVO.class);
                 List<ServiceTypeVO> serviceTypeVOS =localCacheVO.getUtilityBills();
@@ -530,6 +528,10 @@ public class Home extends AppCompatActivity
                     }
                 }
                 // loadFragment(new Home_Menu());
+            }
+
+            if(requestCode==ApplicationConstant.REQ_ENACH_MANDATE){
+                startUtillService(Integer.parseInt(clickServiceId));
             }
         }
     }
