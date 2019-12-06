@@ -60,12 +60,16 @@ public class AdditionalService extends AppCompatActivity implements View.OnClick
     List<ServiceTypeVO> utilityServices;
     List<ServiceTypeVO> servicelist;
 
+    ServiceTypeVO selectServiceTypeVo=null;
+
 
     ImageView back_activity_button ;
     BottomNavigationView navigation;
 
     UAVProgressDialog pd;
     List<ServiceTypeVO> newList;
+
+    boolean onActivityResult=false;
 
 
 
@@ -85,6 +89,12 @@ public class AdditionalService extends AppCompatActivity implements View.OnClick
         back_activity_button=findViewById(R.id.back_activity_button);
 
 
+        selectServiceTypeVo=null;
+
+        onActivityResult=getIntent().getBooleanExtra("onactivityresult",false);
+        selectServiceTypeVo=(ServiceTypeVO) getIntent().getSerializableExtra("servicelist");
+
+
 
         BackgroundAsyncService backgroundAsyncService = new BackgroundAsyncService(pd,false, new BackgroundServiceInterface() {
             @Override
@@ -100,6 +110,22 @@ public class AdditionalService extends AppCompatActivity implements View.OnClick
                 newList.addAll(utilityServices);
                 newList.addAll(servicelist);
 
+                if(selectServiceTypeVo!=null){
+                   newList.clear();
+                   newList.add(selectServiceTypeVo);
+
+                   ArrayList<ServiceTypeVO> serviceTypeVOS =new ArrayList<>();
+                   serviceTypeVOS.addAll(utilityServices);
+                   serviceTypeVOS.addAll(servicelist);
+                   for(ServiceTypeVO serviceTypeVO :serviceTypeVOS){
+                       if(!serviceTypeVO.getServiceTypeId().equals(selectServiceTypeVo.getServiceTypeId()) && serviceTypeVO.getLevel().getLevelId()<=Session.getCustomerLevel(AdditionalService.this)){
+                           newList.add(serviceTypeVO);
+                       }
+                   }
+
+
+
+                }
             }
 
             @Override
@@ -253,7 +279,14 @@ public class AdditionalService extends AppCompatActivity implements View.OnClick
                         addservice.add(myAdapter.mCheckStates.keyAt(i));
                     }
                 }
-                saveServiceAdd(addservice);
+                if(!onActivityResult){
+                    saveServiceAdd(addservice);
+                }else {
+                    Intent intent =new Intent();
+                    intent.putExtra("selectservice",addservice);
+                    setResult(RESULT_OK,intent);
+                    finish();
+                }
                 break;
             case R.id.back_activity_button :
                 /*startActivity(new Intent(AdditionalService.this,Home.class));

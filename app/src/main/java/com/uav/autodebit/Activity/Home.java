@@ -5,30 +5,21 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,14 +27,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.uav.autodebit.BO.BannerBO;
 import com.uav.autodebit.BO.MetroBO;
+import com.uav.autodebit.BO.ServiceBO;
+import com.uav.autodebit.Interface.AlertSelectDialogClick;
+import com.uav.autodebit.Interface.ConfirmationDialogInterface;
+import com.uav.autodebit.Interface.ServiceClick;
 import com.uav.autodebit.R;
 import com.uav.autodebit.adpater.BannerAdapter;
 import com.uav.autodebit.adpater.UitilityAdapter;
-import com.uav.autodebit.androidFragment.Home_Menu;
-import com.uav.autodebit.androidFragment.Profile;
 import com.uav.autodebit.constant.ApplicationConstant;
 import com.uav.autodebit.override.UAVProgressDialog;
 import com.uav.autodebit.permission.Session;
@@ -54,10 +45,8 @@ import com.uav.autodebit.util.ExceptionHandler;
 import com.uav.autodebit.util.Utility;
 import com.uav.autodebit.vo.BannerVO;
 import com.uav.autodebit.vo.ConnectionVO;
-import com.uav.autodebit.vo.CustomerStatusVO;
 import com.uav.autodebit.vo.CustomerVO;
 import com.uav.autodebit.vo.DMRC_Customer_CardVO;
-import com.uav.autodebit.vo.LevelVO;
 import com.uav.autodebit.vo.LocalCacheVO;
 import com.uav.autodebit.vo.ServiceTypeVO;
 import com.uav.autodebit.volley.VolleyResponseListener;
@@ -68,13 +57,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static com.uav.autodebit.util.Utility.fromJson;
 
 public class Home extends AppCompatActivity
         implements View.OnClickListener {
@@ -103,6 +89,11 @@ public class Home extends AppCompatActivity
 
     RecyclerView recyclerView;
     public static String clickServiceId;
+    ServiceTypeVO selectServiceType;
+
+    JSONObject activity_json=new JSONObject();
+    JSONObject json_Service =new JSONObject();
+
 
 
 
@@ -117,20 +108,42 @@ public class Home extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
+
+
+
         dialog=new ProgressDialog(Home.this);
         pd = new UAVProgressDialog(this);
 
         selectedService=null;
         level=null;
 
-
-
-
-
-
-
         try {
-       //check customer level and start activity
+
+            activity_json.put("1","IRCTC");
+            activity_json.put("2","Dmrc_Card_Request");
+            activity_json.put("3","Hyd_Metro");
+            activity_json.put("4","Mum_Metro");
+            activity_json.put("5","Mobile_Prepaid_Recharge_Service");
+            activity_json.put("13","DTH_Recharge_Service");
+            activity_json.put("7","LandlineBill");
+            activity_json.put("8","Broadband");
+            activity_json.put("14","Mobile_Postpaid");
+            activity_json.put("12","Water");
+            activity_json.put("11","Gas_Bill");
+            activity_json.put("10","Electricity_Bill");
+            activity_json.put("15","All_Service");
+
+            json_Service.put("L_2","PanVerification");
+            json_Service.put("L_3","Credit_Score_Report");
+            json_Service.put("L_4","Enach_Mandate");
+            json_Service.put("L_5","Enach_Mandate");
+            json_Service.put("L_6","SI_First_Data");
+
+
+
+
+
+            //check customer level and start activity
         Gson gson =new Gson();
         CustomerVO customerVO = gson.fromJson(Session.getSessionByKey(Home.this,Session.CACHE_CUSTOMER), CustomerVO.class);
         if(customerVO.getLevel().getLevelId()<=2){
@@ -336,25 +349,14 @@ public class Home extends AppCompatActivity
                             List<ServiceTypeVO> serviceTypeVOS = localCacheVO.getSerives();
 
                             level= Session.getCustomerLevel(Home.this);
-                            for(ServiceTypeVO serviceTypeVO :  serviceTypeVOS){
-                                if(serviceTypeVO.getServiceTypeId()== Integer.parseInt(activitylayout.getTag().toString() ) ){
-                                    selectedService=serviceTypeVO;
-                                    break;
-                                }
-                            }
-                        }
 
+                        }
                         @Override
                         public void doPostExecute() {
-
                             activitylayout.setEnabled(true);
+                            clickServiceId=activitylayout.getTag().toString();
+                            startUserClickService(activitylayout.getTag().toString());
 
-                            if(selectedService !=null && selectedService.getAdopted()!=null && selectedService.getAdopted()==1){
-                                startService(activitylayout.getTag().toString());
-                            }else {
-                                clickServiceId=activitylayout.getTag().toString();
-                                startActivityForResult(new Intent(Home.this, AdditionalService.class),200);
-                            }
                         }
                     });
                     backgroundAsyncService.execute();
@@ -363,76 +365,22 @@ public class Home extends AppCompatActivity
         }
     }
 
-    public  void startService(String id){
-        if(level< selectedService.getLevel().getLevelId()){
-            pd.dismiss();
-            level++;
-            String[] changePass = {"Cancel","Next"};
-            switch (level){
-                case 2:
-                    startActivity(new Intent(Home.this, PanVerification.class));
-                    break;
-                case 3:
-                    startActivity(new Intent(Home.this, Credit_Score_Report.class));
-                    break;
-                case 4:
-                    Utility.confirmationDialog(new DialogInterface() {
-                        @Override
-                        public void confirm(Dialog dialog) {
-                            dialog.dismiss();
-                            startActivity(new Intent(Home.this, Enach_Mandate.class).putExtra("activity",getPackageName()+".Activity.SI_First_Data").putExtra("forresutl",false));
-                        }
-                        @Override
-                        public void modify(Dialog dialog) {
-                            dialog.dismiss();
-                        }
-                    }, Home.this, null, "Bank Verification","Mandate",changePass);
-                    break;
-                case 5:
-                    Utility.confirmationDialog(new DialogInterface() {
-                        @Override
-                        public void confirm(Dialog dialog) {
-                            dialog.dismiss();
-                            startActivity(new Intent(Home.this, Enach_Mandate.class).putExtra("activity",getPackageName()+".Activity.SI_First_Data").putExtra("forresutl",false));
-                        }
-                        @Override
-                        public void modify(Dialog dialog) {
-                            dialog.dismiss();
-                        }
-                    }, Home.this, null, "Bank Verification","Mandate",changePass);
-                    break;
-                case 6:
+   
 
-                    Utility.confirmationDialog(new DialogInterface() {
-                        @Override
-                        public void confirm(Dialog dialog) {
-                            dialog.dismiss();
-                            startActivity(new Intent(Home.this, SI_First_Data.class));
-                        }
-                        @Override
-                        public void modify(Dialog dialog) {
-                            dialog.dismiss();
-                        }
-                    }, Home.this, null, "SI Verification","Mandate",changePass);
-
-                    break;
+    public void addMoreService(ConfirmationDialogInterface confirmationDialogInterface){
+        String[] buttons = {"No","Yes"};
+        Utility.confirmationDialog(new DialogInterface() {
+            @Override
+            public void confirm(Dialog dialog) {
+                dialog.dismiss();
+                confirmationDialogInterface.onOk(dialog);
             }
-        }else {
-            switch (id) {
-                case "1":
-                    startActivity(new Intent(Home.this, IRCTC.class));
-                    break;
-                case "2":
-                    dmrcCardRequest();
-                    break;
-                case "3":
-                    startActivity(new Intent(Home.this, Hyd_Metro.class));
-                    break;
-                case "4":
-                    startActivity(new Intent(Home.this, Mum_Metro.class));
-                    break;
+            @Override
+            public void modify(Dialog dialog) {
+                dialog.dismiss();
+                confirmationDialogInterface.onCancel(dialog);
             }
-        }
+        },Home.this,null,"add more service","",buttons);
     }
 
 
@@ -493,10 +441,50 @@ public class Home extends AppCompatActivity
     }
 
 
+    public Double getHighestAmtForService(ArrayList<Integer> ids){
+        LocalCacheVO  localCacheVO = new Gson().fromJson( Session.getSessionByKey(this, Session.LOCAL_CACHE), LocalCacheVO.class);
+        List<ServiceTypeVO> serviceTypeVOS =localCacheVO.getSerives();
+        List<ServiceTypeVO> utilityService =localCacheVO.getUtilityBills();
 
-    public void overrideLocalCache(CustomerVO customerVO){
-        Session.set_Data_Sharedprefence(Home.this, Session.LOCAL_CACHE,customerVO.getLocalCache());
+        List<ServiceTypeVO> newList = new ArrayList<ServiceTypeVO>();
+        newList.addAll(serviceTypeVOS);
+        newList.addAll(utilityService);
+
+        Double serviceamt=0.00;
+        for(int i=0;i<ids.size();i++){
+            for(ServiceTypeVO serviceTypeVO :newList){
+                if(serviceTypeVO.getServiceTypeId()==ids.get(i)){
+                    if(serviceTypeVO.getMandateAmount()>=serviceamt){
+                        serviceamt=serviceTypeVO.getMandateAmount();
+                        break;
+                    }
+                }
+            }
+        }
+        return serviceamt;
     }
+
+    public ServiceTypeVO getServiceForServiceId(String id){
+            LocalCacheVO  localCacheVO = new Gson().fromJson( Session.getSessionByKey(this, Session.LOCAL_CACHE), LocalCacheVO.class);
+            List<ServiceTypeVO> serviceTypeVOS =localCacheVO.getSerives();
+            for(ServiceTypeVO serviceTypeVO :serviceTypeVOS){
+                if(serviceTypeVO.getServiceTypeId()==Integer.parseInt(id)){
+                       return serviceTypeVO;
+                }
+            }
+            List<ServiceTypeVO> utilityService =localCacheVO.getUtilityBills();
+            for(ServiceTypeVO serviceTypeVO :utilityService){
+                if(serviceTypeVO.getServiceTypeId()==Integer.parseInt(id)){
+                        return serviceTypeVO;
+                }
+            }
+            return null;
+    }
+
+
+
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -505,17 +493,11 @@ public class Home extends AppCompatActivity
 
         if(resultCode==RESULT_OK){
             if(requestCode==200){
-                loadDateInRecyclerView();
-                LocalCacheVO  localCacheVO = new Gson().fromJson( Session.getSessionByKey(this, Session.LOCAL_CACHE), LocalCacheVO.class);
-                List<ServiceTypeVO> serviceTypeVOS =localCacheVO.getSerives();
-                for(ServiceTypeVO serviceTypeVO :serviceTypeVOS){
-                    if(serviceTypeVO.getServiceTypeId()==Integer.parseInt(clickServiceId)){
-                        if(serviceTypeVO.getAdopted()==1){
-                            startService(clickServiceId);
-                        }
-                    }
-                }
-               // loadFragment(new Home_Menu());
+              /*  loadDateInRecyclerView();
+                if(getServiceForServiceId(clickServiceId)!=null){
+                    startService(Integer.parseInt(clickServiceId));
+                }*/
+
             }else if(requestCode==100){
                 loadDateInRecyclerView();
                 LocalCacheVO  localCacheVO = new Gson().fromJson( Session.getSessionByKey(this, Session.LOCAL_CACHE), LocalCacheVO.class);
@@ -523,85 +505,270 @@ public class Home extends AppCompatActivity
                 for(ServiceTypeVO serviceTypeVO :serviceTypeVOS){
                     if(serviceTypeVO.getServiceTypeId()==Integer.parseInt(clickServiceId)){
                         if(serviceTypeVO.getAdopted()==1 && level>=serviceTypeVO.getLevel().getLevelId()){
-                            startUtillService(serviceTypeVO.getServiceTypeId());
+                           /// startUserClickService(serviceTypeVO.getServiceTypeId());
+                            serviceClick(serviceTypeVO.getServiceTypeId(),new ServiceClick((ServiceClick.OnSuccess)(s)->{
+                                try {
+                                    startActivityServiceClick(Integer.parseInt(clickServiceId),Class.forName(getPackageName()+".Activity."+activity_json.get(clickServiceId)),s,serviceTypeVO.getMandateAmount());
+                                }catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            },(ServiceClick.OnError)(e)->{
+
+                            }));
                         }
                     }
                 }
                 // loadFragment(new Home_Menu());
-            }
+            }else if(requestCode==ApplicationConstant.REQ_ENACH_MANDATE){
+                startUserClickService(clickServiceId);
+            }else if(requestCode==ApplicationConstant.REQ_ALLSERVICE){
+                startUserClickService(clickServiceId);
+            }else if(requestCode==ApplicationConstant.REQ_AdditionalService_Add_More){
+                Toast.makeText(cntxt, "REQ_AdditionalService_Add_More", Toast.LENGTH_SHORT).show();
+                ArrayList<Integer> integers =data.getIntegerArrayListExtra("selectservice");
 
-            if(requestCode==ApplicationConstant.REQ_ENACH_MANDATE){
-                startUtillService(Integer.parseInt(clickServiceId));
+                double highestAmt=getHighestAmtForService(integers);
+                startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",highestAmt),ApplicationConstant.REQ_ENACH_MANDATE);
+
+
             }
+        }
+
+    }
+
+
+
+   public void startUserClickService(String serviceId){
+        try {
+            selectServiceType=new ServiceTypeVO();
+            BackgroundAsyncService backgroundAsyncService = new BackgroundAsyncService(pd,true, new BackgroundServiceInterface() {
+                @Override
+                public void doInBackGround() {
+                    selectServiceType=getServiceForServiceId(serviceId);
+                }
+                @Override
+                public void doPostExecute() {
+
+                    serviceClick(Integer.parseInt(serviceId),new ServiceClick((ServiceClick.OnSuccess)(s)->{
+                        try {
+                            startActivityServiceClick(Integer.parseInt(serviceId),Class.forName(getPackageName()+".Activity."+activity_json.get(serviceId)),s,selectServiceType.getMandateAmount());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    },(ServiceClick.OnError)(e)->{
+                    }));
+                }
+            });
+            backgroundAsyncService.execute();
+        }catch (Exception e){
+            Log.e("error_home",e.getMessage());
+        }
+   }
+
+
+
+
+    // add bank for service
+    public  void serviceClick(int serviceId , ServiceClick serviceClick){
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        ConnectionVO connectionVO = ServiceBO.addBankForService();
+
+        CustomerVO customerVO=new CustomerVO();
+        customerVO.setCustomerId(Integer.valueOf(Session.getCustomerId(this)));
+        customerVO.setServiceId(serviceId);
+        Gson gson =new Gson();
+        String json = gson.toJson(customerVO);
+        params.put("volley", json);
+        connectionVO.setParams(params);
+
+        Log.w("addBankForService",params.toString());
+
+        VolleyUtils.makeJsonObjectRequest(this,connectionVO , new VolleyResponseListener() {
+            @Override
+            public void onError(String message) {
+            }
+            @Override
+            public void onResponse(Object resp) throws JSONException {
+                JSONObject response = (JSONObject) resp;
+                Gson gson = new Gson();
+                CustomerVO customerVO = gson.fromJson(response.toString(), CustomerVO.class);
+
+                if(customerVO.getStatusCode().equals("400")){
+                    ArrayList error = (ArrayList) customerVO.getErrorMsgs();
+                    StringBuilder sb = new StringBuilder();
+                    for(int i=0; i<error.size(); i++){
+                        sb.append(error.get(i)).append("\n");
+                    }
+                    Utility.alertDialog(Home.this,"Alert",sb.toString(),"Ok");
+                }else {
+                    serviceClick.onSuccess(customerVO);
+                }
+            }
+        });
+    }
+
+
+    public void startActivityServiceClick(int serviceId,Class classname,Object o,double mandateamt){
+        try {
+            CustomerVO customerVO =(CustomerVO) o;
+
+            if(!customerVO.getStatusCode().equals("200")){
+
+                if(customerVO.getStatusCode().equals("ap104")){
+
+                    String[] buttons = {"Cancel","Ok"};
+
+                    Utility.confirmationDialog(new DialogInterface() {
+                        @Override
+                        public void confirm(Dialog dialog) {
+                            dialog.dismiss();
+                            startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt),ApplicationConstant.REQ_ENACH_MANDATE);
+                        }
+
+                        @Override
+                        public void modify(Dialog dialog) {
+                            dialog.dismiss();
+                        }
+                    },Home.this,null,customerVO.getErrorMsgs().get(0),null,buttons);
+
+
+                }else {
+
+                    Utility.showSingleButtonDialogconfirmation(Home.this, new DialogInterface() {
+                        @Override
+                        public void confirm(Dialog dialog) {
+                            dialog.dismiss();
+                            try {
+                                if(customerVO.getStatusCode().equals("L_2")){
+                                    startActivity(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_2"))));
+                                    finish();
+                                }else if(customerVO.getStatusCode().equals("L_3")){
+                                    startActivity(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_3"))));
+                                    finish();
+                                }else if(customerVO.getStatusCode().equals("L_4")){
+
+                                    addMoreService(new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(d)->{
+
+                                        startActivityForResult(new Intent(Home.this,AdditionalService.class).putExtra("onactivityresult",true).putExtra("servicelist",selectServiceType),ApplicationConstant.REQ_AdditionalService_Add_More);
+                                    },(ConfirmationDialogInterface.OnCancel)(d)->{
+                                        try {
+                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt),ApplicationConstant.REQ_AdditionalService_Add_More);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }));
+                                }else if(customerVO.getStatusCode().equals("L_5")){
+                                    addMoreService(new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(d)->{
+                                        startActivityForResult(new Intent(Home.this,AdditionalService.class).putExtra("onactivityresult",true).putExtra("servicelist",selectServiceType),ApplicationConstant.REQ_AdditionalService_Add_More);
+                                    },(ConfirmationDialogInterface.OnCancel)(d)->{
+                                        try {
+                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_5"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt),ApplicationConstant.REQ_AdditionalService_Add_More);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }));
+                                }else if(customerVO.getStatusCode().equals("L_6")){
+                                    addMoreService(new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(d)->{
+                                        try {
+                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_6"))).putExtra("onactivityresult",true),ApplicationConstant.REQ_AdditionalService_Add_More);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    },(ConfirmationDialogInterface.OnCancel)(d)->{
+
+                                    }));
+                                }else  if(customerVO.getStatusCode().equals("ap101")){
+                                    startActivityForResult(new Intent(Home.this,AdditionalService.class), ApplicationConstant.REQ_ALLSERVICE);
+
+                                }else if(customerVO.getStatusCode().equals("ap102")){
+                                    startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt),ApplicationConstant.REQ_ENACH_MANDATE);
+                                }
+                                else if(customerVO.getStatusCode().equals("ap103")){
+
+                                    JSONArray arryjson=new JSONArray(customerVO.getAnonymousString());
+                                    ArrayList<String> entityText=new ArrayList<>();
+                                    ArrayList<Object> entityId=new ArrayList<>();
+
+                                    for(int i=0;i<arryjson.length();i++){
+                                        JSONObject jsonObject =arryjson.getJSONObject(i);
+                                        entityText.add(jsonObject.getString("bankName")+"\n"+jsonObject.getString("accountNo"));
+                                        entityId.add(jsonObject.getInt("id"));
+                                    }
+
+                                    Utility.alertselectdialog(Home.this,customerVO.getErrorMsgs().get(0),entityText,entityId,new AlertSelectDialogClick((AlertSelectDialogClick.OnSuccess)(s)->{
+                                        setBankForService(serviceId,Integer.parseInt(Session.getCustomerId(Home.this)),Integer.parseInt(s));
+                                    }));
+                                }
+                            }catch (Exception e){
+                            }
+                        }
+                        @Override
+                        public void modify(Dialog dialog) {
+                        }
+                    },"",customerVO.getErrorMsgs().get(0));
+                }
+            }else {
+                    if(serviceId==2){
+                        dmrcCardRequest();
+                    }else {
+                        Intent intent;
+                        intent =new Intent(Home.this, classname);
+                        intent.putExtra("serviceid",serviceId+"");
+                        startActivity(intent);
+                    }
+            }
+        }catch (Exception e){
+            Log.e("error_serviceClick",e.getMessage());
         }
     }
 
-   public void startUtillService(final Integer serviceId){
+    //bank list select bank for service
+    public void setBankForService( int serviceId,int customerId,int bankId){
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        ConnectionVO connectionVO = ServiceBO.setBankForService();
 
-       BackgroundAsyncService backgroundAsyncService = new BackgroundAsyncService(pd,true, new BackgroundServiceInterface() {
-           @Override
-           public void doInBackGround() {
-               Intent intent;
-               switch (serviceId){
-                   case 5 :
-                       intent =new Intent(Home.this, Mobile_Prepaid_Recharge_Service.class);
-                       intent.putExtra("serviceid",serviceId.toString());
-                       startActivity(intent);
-                       break;
-                   case 13 :
-                       intent =new Intent(Home.this, DTH_Recharge_Service.class);
-                       intent.putExtra("serviceid",serviceId.toString());
-                       startActivity(intent);
-                       break;
-                   case 7 :
-                       intent =new Intent(Home.this, LandlineBill.class);
-                       intent.putExtra("serviceid",serviceId.toString());
-                       startActivity(intent);
-                       break;
-                   case 8 :
-                       intent =new Intent(Home.this, Broadband.class);
-                       intent.putExtra("serviceid",serviceId.toString());
-                       startActivity(intent);
-                       break;
-                   case 14 :
-                       intent =new Intent(Home.this, Mobile_Postpaid.class);
-                       intent.putExtra("serviceid",serviceId.toString());
-                       startActivity(intent);
-                       break;
-                   case 12 :
-                       intent =new Intent(Home.this, Water.class);
-                       intent.putExtra("serviceid",serviceId.toString());
-                       startActivity(intent);
-                       break;
-                   case 11 :
-                       intent =new Intent(Home.this, Gas_Bill.class);
-                       intent.putExtra("serviceid",serviceId.toString());
-                       startActivity(intent);
-                       break;
-                   case 10:
-                       intent =new Intent(Home.this, Electricity_Bill.class);
-                       intent.putExtra("serviceid",serviceId.toString());
-                       startActivity(intent);
-                       break;
-                   case 15:
-                       intent =new Intent(Home.this, All_Service.class);
-                       intent.putExtra("serviceid",serviceId.toString());
-                       startActivity(intent);
-                       break;
-                   default:
-                       pd.dismiss();
-               }
-           }
+        CustomerVO customerVO=new CustomerVO();
+        customerVO.setCustomerId(customerId);
+        customerVO.setServiceId(serviceId);
+        customerVO.setAnonymousInteger(bankId);
+        Gson gson =new Gson();
+        String json = gson.toJson(customerVO);
+        params.put("volley", json);
+        connectionVO.setParams(params);
+        Log.w("setBankForService",params.toString());
+        VolleyUtils.makeJsonObjectRequest(this,connectionVO , new VolleyResponseListener() {
+            @Override
+            public void onError(String message) {
+            }
+            @Override
+            public void onResponse(Object resp) throws JSONException {
+                JSONObject response = (JSONObject) resp;
+                Gson gson = new Gson();
+                CustomerVO customerVO = gson.fromJson(response.toString(), CustomerVO.class);
 
-           @Override
-           public void doPostExecute() {
+                if(customerVO.getStatusCode().equals("400")){
+                    ArrayList error = (ArrayList) customerVO.getErrorMsgs();
+                    StringBuilder sb = new StringBuilder();
+                    for(int i=0; i<error.size(); i++){
+                        sb.append(error.get(i)).append("\n");
+                    }
+                    Utility.alertDialog(Home.this,"Alert",sb.toString(),"Ok");
+                }else {
+                    startUserClickService(serviceId+"");
+                }
+            }
+        });
+    }
 
-           }
-       });
-       backgroundAsyncService.execute();
 
-   }
 
+
+
+    public void overrideLocalCache(CustomerVO customerVO){
+        Session.set_Data_Sharedprefence(Home.this, Session.LOCAL_CACHE,customerVO.getLocalCache());
+    }
 
 
     @Override

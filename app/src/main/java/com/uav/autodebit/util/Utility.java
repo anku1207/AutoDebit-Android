@@ -52,11 +52,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +72,7 @@ import com.paynimo.android.payment.PaymentModesActivity;
 import com.uav.autodebit.Activity.Enach_Mandate;
 import com.uav.autodebit.Activity.Login;
 import com.uav.autodebit.Activity.PanVerification;
+import com.uav.autodebit.Interface.AlertSelectDialogClick;
 import com.uav.autodebit.R;
 import com.uav.autodebit.constant.ApplicationConstant;
 import com.uav.autodebit.volley.VolleyUtils;
@@ -730,6 +734,7 @@ public class Utility {
                 text.setText(Msg);
                 text.setTypeface(typeface);
 
+
                 et.addView(text);
                 mainlayout.addView(et);
             }
@@ -940,6 +945,37 @@ public class Utility {
             }
         }
         return false;
+    }
+
+
+    public static void alertselectdialog(Context context, String title, ArrayList<String> entityText, ArrayList<Object> entityId, AlertSelectDialogClick alertSelectDialogClick){
+        final Dialog var3 = new Dialog(context);
+        var3.requestWindowFeature(1);
+        var3.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        var3.setContentView(R.layout.alertselectdialog);
+        var3.setCanceledOnTouchOutside(false);
+        TextView title_text = (TextView)var3.findViewById(R.id.dialog_one_tv_title);
+        title_text.setText(title);
+        ListView listView = (ListView) var3.findViewById(R.id.listview);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter(context, R.layout.activity_listtextview, R.id.textdata, entityText);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                var3.dismiss();
+                alertSelectDialogClick.onSuccess(entityId.get(i).toString());
+            }
+        });
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(var3.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        var3.show();
+        var3.getWindow().setAttributes(lp);
     }
 
 

@@ -21,7 +21,7 @@ public class ApplicationConstant {
 
 
 
-    public static int  REQ_ENACH_MANDATE=1003,REQ_ALLSERVICE=1004;
+    public static int  REQ_ENACH_MANDATE=1003,REQ_ALLSERVICE=1004,REQ_AdditionalService_Add_More=1005;
 
 
 

@@ -117,6 +117,13 @@ public class Enach_Mandate extends AppCompatActivity{
         });
 
         foractivity=getIntent().getBooleanExtra("foractivity",true);
+        double mandateamt=getIntent().getDoubleExtra("mandateamt",0.0);
+        if(mandateamt!=0.0){
+            maxamount.setText((int)mandateamt+"");
+            maxamount.setEnabled(false);
+            minamt=(int)mandateamt;
+            //errormsz=object.getString("minMandateAmtFailedMsg");
+        }
 
         /*maxamount.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bankicon, 0, R.drawable.edit, 0);
         maxamount.setEnabled(false);*/
@@ -320,8 +327,6 @@ public class Enach_Mandate extends AppCompatActivity{
 
     public void banklist(){
 
-
-
         VolleyUtils.makeJsonObjectRequest(this, MandateBO.enachBankList(), new VolleyResponseListener() {
             @Override
             public void onError(String message) {
@@ -335,7 +340,6 @@ public class Enach_Mandate extends AppCompatActivity{
                     Utility.showSingleButtonDialog(Enach_Mandate.this,"Error !",response.getString("errorMsg"),false);
 
                 }else {
-
                     JSONObject object = new JSONObject(response.getString("result"));
                     JSONArray jsonArray=object.getJSONArray("data");
 
