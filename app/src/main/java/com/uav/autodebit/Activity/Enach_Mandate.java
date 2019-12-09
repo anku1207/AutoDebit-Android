@@ -221,8 +221,6 @@ public class Enach_Mandate extends AppCompatActivity{
                 }catch (Exception e){
                     Log.w("error_enach",e.getMessage());
                 }
-
-
               //  mandatebank();
             }
         });
@@ -293,7 +291,6 @@ public class Enach_Mandate extends AppCompatActivity{
         params.put("accountHolderName",acholdername.getText().toString().trim());
         params.put("returnURL",localCacheVO.geteNachReturnURL());
         params.put("customerid",customerId);
-        params.put("selectServiceIds",selectServiceIds!=null?selectServiceIds:null);
         connectionVO.setParams(params);
 
         Log.w("sendrequest",params.toString());
@@ -320,7 +317,7 @@ public class Enach_Mandate extends AppCompatActivity{
                     JSONObject object1=object.getJSONObject("redirect");
                     String url=object1.getString("url");
 
-                    customerAuthId=object1.getInt("customerAuthId");
+                    customerAuthId=response.getInt("customerAuthId");
 
                     Log.w("urlcreate",url);
 
@@ -416,6 +413,7 @@ public class Enach_Mandate extends AppCompatActivity{
         customerAuthServiceVO.setProviderTokenId(id);
         customerAuthServiceVO.setCustomer(customerVO);
         customerAuthServiceVO.setCustomerAuthId(customerAuthId);
+        customerAuthServiceVO.setAnonymousString(selectServiceIds!=null?selectServiceIds.toString():null);
         Gson gson = new Gson();
         String json = gson.toJson(customerAuthServiceVO);
 
