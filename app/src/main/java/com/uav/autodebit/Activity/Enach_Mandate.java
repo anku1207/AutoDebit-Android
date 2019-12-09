@@ -80,15 +80,19 @@ public class Enach_Mandate extends AppCompatActivity{
     String errormsz;
 
     ImageView back_activity_button1;
-
     int minamt=0;
 
+
+
+    Integer customerAuthId;
 
     boolean foractivity=false;
 
     List<String> paths = new ArrayList<String>();
 
     HashMap<String,String> selectbank=new HashMap<>();
+
+    ArrayList<Integer> selectServiceIds=new ArrayList<>();
 
 
 
@@ -99,6 +103,8 @@ public class Enach_Mandate extends AppCompatActivity{
         setContentView(R.layout.activity_enach__mandate);
         getSupportActionBar().hide();
         banklist();
+
+        customerAuthId=null;
 
         textbox=findViewById(R.id.textbox);
 
@@ -118,6 +124,9 @@ public class Enach_Mandate extends AppCompatActivity{
 
         foractivity=getIntent().getBooleanExtra("foractivity",true);
         double mandateamt=getIntent().getDoubleExtra("mandateamt",0.0);
+        selectServiceIds=getIntent().getIntegerArrayListExtra("selectservice");
+
+
         if(mandateamt!=0.0){
             maxamount.setText((int)mandateamt+"");
             maxamount.setEnabled(false);
@@ -170,43 +179,44 @@ public class Enach_Mandate extends AppCompatActivity{
             @Override
             public void onClick(View view) {
 
-
-
-
                 boolean validation=true;
 
                 if(acno.getText().toString().equals("")){
                     acno.setError("this filed is required");
                     validation=false;
                 }
+
                 if(acholdername.getText().toString().equals("")){
                     acholdername.setError("this filed is required");
                     validation=false;
                 }
+
                 if(maxamount.getText().toString().equals("")){
                     maxamount.setError("this filed is required");
                     validation=false;
                 }
+
                 if(ifsc.getText().toString().equals("")){
                     ifsc.setError("this filed is required");
                     validation=false;
                 }
 
-
                 if( bankshortname==null){
                     Utility.alertDialog(Enach_Mandate.this,"Alert","Bank is not selected","Ok");
                     validation=false;
-
                 }
                 if(!maxamount.getText().toString().equals("")  && Integer.parseInt(maxamount.getText().toString())< minamt){
                     Utility.showSingleButtonDialog(Enach_Mandate.this,"Alert",errormsz,false);
                     validation=false;
                 }
 
+                if(acno.getText().toString().length()<5){
+                    acno.setError("Minimum length is 5");
+                    validation=false;
+                }
                 if(!validation) return;
+
                 try {
-
-
                     verifydialog();
                 }catch (Exception e){
                     Log.w("error_enach",e.getMessage());
@@ -283,6 +293,7 @@ public class Enach_Mandate extends AppCompatActivity{
         params.put("accountHolderName",acholdername.getText().toString().trim());
         params.put("returnURL",localCacheVO.geteNachReturnURL());
         params.put("customerid",customerId);
+        params.put("selectServiceIds",selectServiceIds!=null?selectServiceIds:null);
         connectionVO.setParams(params);
 
         Log.w("sendrequest",params.toString());
@@ -308,6 +319,8 @@ public class Enach_Mandate extends AppCompatActivity{
                     JSONObject object = new JSONObject(response.getString("result"));
                     JSONObject object1=object.getJSONObject("redirect");
                     String url=object1.getString("url");
+
+                    customerAuthId=object1.getInt("customerAuthId");
 
                     Log.w("urlcreate",url);
 
@@ -377,7 +390,7 @@ public class Enach_Mandate extends AppCompatActivity{
                         JSONArray jsonArray =new JSONArray(data.getStringExtra("url"));
 
                         String name=(jsonArray.getJSONObject(2)).getString("mandate_id");
-                        Log.w("mandateid",name);
+                        Log.w("mandateid",jsonArray.toString());
                         setEnachMandateId((jsonArray.getJSONObject(2)).getString("mandate_id"));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -402,6 +415,7 @@ public class Enach_Mandate extends AppCompatActivity{
         CustomerAuthServiceVO  customerAuthServiceVO=new CustomerAuthServiceVO();
         customerAuthServiceVO.setProviderTokenId(id);
         customerAuthServiceVO.setCustomer(customerVO);
+        customerAuthServiceVO.setCustomerAuthId(customerAuthId);
         Gson gson = new Gson();
         String json = gson.toJson(customerAuthServiceVO);
 

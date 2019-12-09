@@ -31,14 +31,16 @@ public class ListViewItemCheckboxBaseAdapter extends BaseAdapter implements Comp
     private LayoutInflater layoutInflater;
     private int length;
     public SparseBooleanArray mCheckStates;
+    private Integer selectServiceTypeId;
 
-    public ListViewItemCheckboxBaseAdapter(Context context, List<ServiceTypeVO> dataList, int design) {
+    public ListViewItemCheckboxBaseAdapter(Context context, List<ServiceTypeVO> dataList, int design,Integer selectServiceTypeId) {
         this.context = context;
         this.dataList = dataList;
         this.design = design;
         layoutInflater = ((Activity) context).getLayoutInflater();
         this.length = dataList.size();
         mCheckStates = new SparseBooleanArray(dataList.size());
+        this.selectServiceTypeId=selectServiceTypeId;
     }
 
     @Override
@@ -75,7 +77,7 @@ public class ListViewItemCheckboxBaseAdapter extends BaseAdapter implements Comp
         imageView.setImageDrawable(Utility.GetImage(context,serviceTypeVO.getAppIcon()));
 
         checkBox.setTag(serviceTypeVO.getServiceTypeId());
-        checkBox.setChecked( serviceTypeVO.getAdopted()==1?true:false);
+        checkBox.setChecked( serviceTypeVO.getAdopted()==1 || serviceTypeVO.getServiceTypeId()==selectServiceTypeId?true:false);
         if (checkBox.isChecked()){
             checkBox.setEnabled(false); // disable checkbox
             mCheckStates.put(serviceTypeVO.getServiceTypeId(), true);

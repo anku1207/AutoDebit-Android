@@ -130,7 +130,7 @@ public class AdditionalService extends AppCompatActivity implements View.OnClick
 
             @Override
             public void doPostExecute() {
-                myAdapter=new ListViewItemCheckboxBaseAdapter(AdditionalService.this, newList, R.layout.checkbox_with_text);
+                myAdapter=new ListViewItemCheckboxBaseAdapter(AdditionalService.this, newList, R.layout.checkbox_with_text,(selectServiceTypeVo!=null?selectServiceTypeVo.getServiceTypeId():null));
                 listview.setAdapter(myAdapter);
                 listview.setExpanded(true);
             }

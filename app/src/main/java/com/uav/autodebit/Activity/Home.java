@@ -127,6 +127,7 @@ public class Home extends AppCompatActivity
             activity_json.put("13","DTH_Recharge_Service");
             activity_json.put("7","LandlineBill");
             activity_json.put("8","Broadband");
+            activity_json.put("9","Mum_Metro");
             activity_json.put("14","Mobile_Postpaid");
             activity_json.put("12","Water");
             activity_json.put("11","Gas_Bill");
@@ -141,22 +142,20 @@ public class Home extends AppCompatActivity
 
 
 
-
-
-            //check customer level and start activity
-        Gson gson =new Gson();
-        CustomerVO customerVO = gson.fromJson(Session.getSessionByKey(Home.this,Session.CACHE_CUSTOMER), CustomerVO.class);
-        if(customerVO.getLevel().getLevelId()<=2){
-            if(customerVO.getLevel().getLevelId()==1){
-                startActivity(new Intent(Home.this,PanVerification.class));
-                finish();
-                return;
-            }else if(customerVO.getLevel().getLevelId()==2){
-                startActivity(new Intent(Home.this,Credit_Score_Report.class));
-                finish();
-                return;
+        //check customer level and start activity
+            Gson gson =new Gson();
+            CustomerVO customerVO = gson.fromJson(Session.getSessionByKey(Home.this,Session.CACHE_CUSTOMER), CustomerVO.class);
+            if(customerVO.getLevel().getLevelId()<=2){
+                if(customerVO.getLevel().getLevelId()==1){
+                    startActivity(new Intent(Home.this,PanVerification.class));
+                    finish();
+                    return;
+                }else if(customerVO.getLevel().getLevelId()==2){
+                    startActivity(new Intent(Home.this,Credit_Score_Report.class));
+                    finish();
+                    return;
+                }
             }
-        }
 
             // override local cache
             overrideLocalCache(customerVO);
@@ -524,11 +523,14 @@ public class Home extends AppCompatActivity
             }else if(requestCode==ApplicationConstant.REQ_ALLSERVICE){
                 startUserClickService(clickServiceId);
             }else if(requestCode==ApplicationConstant.REQ_AdditionalService_Add_More){
-                Toast.makeText(cntxt, "REQ_AdditionalService_Add_More", Toast.LENGTH_SHORT).show();
                 ArrayList<Integer> integers =data.getIntegerArrayListExtra("selectservice");
 
                 double highestAmt=getHighestAmtForService(integers);
-                startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",highestAmt),ApplicationConstant.REQ_ENACH_MANDATE);
+                Intent enachMandate=new Intent(Home.this,Enach_Mandate.class);
+                enachMandate.putExtra("forresutl",true);
+                enachMandate.putExtra("mandateamt",highestAmt);
+                enachMandate.putExtra("selectservice",integers);
+                startActivityForResult(enachMandate,ApplicationConstant.REQ_ENACH_MANDATE);
 
 
             }
@@ -710,6 +712,12 @@ public class Home extends AppCompatActivity
                     },"",customerVO.getErrorMsgs().get(0));
                 }
             }else {
+
+                    //set session customer or local cache
+                    Session.set_Data_Sharedprefence(Home.this,Session.CACHE_CUSTOMER,o.toString());
+                    Session.set_Data_Sharedprefence(Home.this, Session.LOCAL_CACHE,customerVO.getLocalCache());
+                    loadDateInRecyclerView();
+
                     if(serviceId==2){
                         dmrcCardRequest();
                     }else {
@@ -757,6 +765,12 @@ public class Home extends AppCompatActivity
                     Utility.alertDialog(Home.this,"Alert",sb.toString(),"Ok");
                 }else {
                     startUserClickService(serviceId+"");
+
+                    //set session customer or local cache
+                    Session.set_Data_Sharedprefence(Home.this,Session.CACHE_CUSTOMER,response.toString());
+                    Session.set_Data_Sharedprefence(Home.this, Session.LOCAL_CACHE,customerVO.getLocalCache());
+
+                    loadDateInRecyclerView();
                 }
             }
         });
