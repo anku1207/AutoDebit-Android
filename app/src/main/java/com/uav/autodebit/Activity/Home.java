@@ -57,6 +57,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
@@ -542,6 +543,7 @@ public class Home extends AppCompatActivity
 
    public void startUserClickService(String serviceId){
         try {
+            clickServiceId=serviceId;
             selectServiceType=new ServiceTypeVO();
             BackgroundAsyncService backgroundAsyncService = new BackgroundAsyncService(pd,true, new BackgroundServiceInterface() {
                 @Override
@@ -624,7 +626,7 @@ public class Home extends AppCompatActivity
                         @Override
                         public void confirm(Dialog dialog) {
                             dialog.dismiss();
-                            startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt),ApplicationConstant.REQ_ENACH_MANDATE);
+                            startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                         }
 
                         @Override
@@ -654,7 +656,7 @@ public class Home extends AppCompatActivity
                                         startActivityForResult(new Intent(Home.this,AdditionalService.class).putExtra("onactivityresult",true).putExtra("servicelist",selectServiceType),ApplicationConstant.REQ_AdditionalService_Add_More);
                                     },(ConfirmationDialogInterface.OnCancel)(d)->{
                                         try {
-                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt),ApplicationConstant.REQ_AdditionalService_Add_More);
+                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_AdditionalService_Add_More);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -664,7 +666,7 @@ public class Home extends AppCompatActivity
                                         startActivityForResult(new Intent(Home.this,AdditionalService.class).putExtra("onactivityresult",true).putExtra("servicelist",selectServiceType),ApplicationConstant.REQ_AdditionalService_Add_More);
                                     },(ConfirmationDialogInterface.OnCancel)(d)->{
                                         try {
-                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_5"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt),ApplicationConstant.REQ_AdditionalService_Add_More);
+                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_5"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_AdditionalService_Add_More);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -685,7 +687,11 @@ public class Home extends AppCompatActivity
                                     startActivityForResult(new Intent(Home.this,AdditionalService.class), ApplicationConstant.REQ_ALLSERVICE);
 
                                 }else if(customerVO.getStatusCode().equals("ap102")){
-                                    startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt),ApplicationConstant.REQ_ENACH_MANDATE);
+                                    ArrayList<Integer> integers =new ArrayList<>();
+                                    integers.add(serviceId);
+
+
+                                    startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                                 }
                                 else if(customerVO.getStatusCode().equals("ap103")){
 
