@@ -235,8 +235,7 @@ public class AdditionalService extends AppCompatActivity implements View.OnClick
                         }
                         // Utility.alertDialog(PanVerification.this,"Alert",sb.toString(),"Ok");
                         Utility.showSingleButtonDialog(AdditionalService.this,"Error !",sb.toString(),false);
-                    }else {
-
+                    }else if(customerVO1.getStatusCode().equals("200")){
                         Session.set_Data_Sharedprefence(AdditionalService.this,Session.CACHE_CUSTOMER,response.toString());
                         CustomerVO customerVO = new Gson().fromJson(Session.getSessionByKey(AdditionalService.this,Session.CACHE_CUSTOMER), CustomerVO.class);
                         Session.set_Data_Sharedprefence(AdditionalService.this, Session.LOCAL_CACHE,customerVO.getLocalCache());
@@ -245,6 +244,8 @@ public class AdditionalService extends AppCompatActivity implements View.OnClick
                         setResult(RESULT_OK,intent);
                         finish();
 
+                    }else {
+                        Utility.showSingleButtonDialog(AdditionalService.this,null,customerVO1.getErrorMsgs().get(0),false);
                     }
                 }
             });

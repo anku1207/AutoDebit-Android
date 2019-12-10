@@ -325,7 +325,7 @@ public class Home extends AppCompatActivity
             final ImageView activeservice=galView.findViewById(R.id.serviceactive);
             img.setImageDrawable(Utility.GetImage(this,serviceTypeVO.getAppIcon()));
 
-            if(serviceTypeVO.getAdopted()==1 && serviceTypeVO.getMandateAmount()<=serviceTypeVO.getServiceAdopteBMA()){
+            if(serviceTypeVO.getAdopted()==1 && serviceTypeVO.getServiceAdopteBMA()!=null && serviceTypeVO.getMandateAmount()<=serviceTypeVO.getServiceAdopteBMA()){
                 activeservice.setVisibility(View.VISIBLE);
             }else {
                 activeservice.setVisibility(View.GONE);
@@ -380,7 +380,7 @@ public class Home extends AppCompatActivity
                 dialog.dismiss();
                 confirmationDialogInterface.onCancel(dialog);
             }
-        },Home.this,null,"add more service","",buttons);
+        },Home.this,null,"Would you like add more service ?","",buttons);
     }
 
 
@@ -491,55 +491,21 @@ public class Home extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
 
-        if(resultCode==RESULT_OK){
-            if(requestCode==200){
-              /*  loadDateInRecyclerView();
-                if(getServiceForServiceId(clickServiceId)!=null){
-                    startService(Integer.parseInt(clickServiceId));
-                }*/
-
-            }else if(requestCode==100){
-                loadDateInRecyclerView();
-                LocalCacheVO  localCacheVO = new Gson().fromJson( Session.getSessionByKey(this, Session.LOCAL_CACHE), LocalCacheVO.class);
-                List<ServiceTypeVO> serviceTypeVOS =localCacheVO.getUtilityBills();
-                for(ServiceTypeVO serviceTypeVO :serviceTypeVOS){
-                    if(serviceTypeVO.getServiceTypeId()==Integer.parseInt(clickServiceId)){
-                        if(serviceTypeVO.getAdopted()==1 && level>=serviceTypeVO.getLevel().getLevelId()){
-                           /// startUserClickService(serviceTypeVO.getServiceTypeId());
-                            serviceClick(serviceTypeVO.getServiceTypeId(),new ServiceClick((ServiceClick.OnSuccess)(s)->{
-                                try {
-                                    startActivityServiceClick(Integer.parseInt(clickServiceId),Class.forName(getPackageName()+".Activity."+activity_json.get(clickServiceId)),s,serviceTypeVO.getMandateAmount());
-                                }catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            },(ServiceClick.OnError)(e)->{
-
-                            }));
-                        }
-                    }
-                }
-                // loadFragment(new Home_Menu());
-            }else if(requestCode==ApplicationConstant.REQ_ENACH_MANDATE){
+        if(requestCode==ApplicationConstant.REQ_ENACH_MANDATE){
                 startUserClickService(clickServiceId);
-            }else if(requestCode==ApplicationConstant.REQ_ALLSERVICE){
-                startUserClickService(clickServiceId);
-            }else if(requestCode==ApplicationConstant.REQ_AdditionalService_Add_More){
-                ArrayList<Integer> integers =data.getIntegerArrayListExtra("selectservice");
+        }else if(requestCode==ApplicationConstant.REQ_ALLSERVICE){
+            startUserClickService(clickServiceId);
+        }else if(requestCode==ApplicationConstant.REQ_AdditionalService_Add_More){
+            ArrayList<Integer> integers =data.getIntegerArrayListExtra("selectservice");
 
-                double highestAmt=getHighestAmtForService(integers);
-                Intent enachMandate=new Intent(Home.this,Enach_Mandate.class);
-                enachMandate.putExtra("forresutl",true);
-                enachMandate.putExtra("mandateamt",highestAmt);
-                enachMandate.putExtra("selectservice",integers);
-                startActivityForResult(enachMandate,ApplicationConstant.REQ_ENACH_MANDATE);
-
-
-            }
+            double highestAmt=getHighestAmtForService(integers);
+            Intent enachMandate=new Intent(Home.this,Enach_Mandate.class);
+            enachMandate.putExtra("forresutl",true);
+            enachMandate.putExtra("mandateamt",highestAmt);
+            enachMandate.putExtra("selectservice",integers);
+            startActivityForResult(enachMandate,ApplicationConstant.REQ_ENACH_MANDATE);
         }
-
     }
-
-
 
    public void startUserClickService(String serviceId){
         try {
@@ -656,7 +622,7 @@ public class Home extends AppCompatActivity
                                         startActivityForResult(new Intent(Home.this,AdditionalService.class).putExtra("onactivityresult",true).putExtra("servicelist",selectServiceType),ApplicationConstant.REQ_AdditionalService_Add_More);
                                     },(ConfirmationDialogInterface.OnCancel)(d)->{
                                         try {
-                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_AdditionalService_Add_More);
+                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -666,23 +632,20 @@ public class Home extends AppCompatActivity
                                         startActivityForResult(new Intent(Home.this,AdditionalService.class).putExtra("onactivityresult",true).putExtra("servicelist",selectServiceType),ApplicationConstant.REQ_AdditionalService_Add_More);
                                     },(ConfirmationDialogInterface.OnCancel)(d)->{
                                         try {
-                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_5"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_AdditionalService_Add_More);
+                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_5"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
 
                                     }));
                                 }else if(customerVO.getStatusCode().equals("L_6")){
-                                    addMoreService(new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(d)->{
                                         try {
                                             startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_6"))).putExtra("onactivityresult",true),ApplicationConstant.REQ_AdditionalService_Add_More);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
 
-                                    },(ConfirmationDialogInterface.OnCancel)(d)->{
 
-                                    }));
                                 }else  if(customerVO.getStatusCode().equals("ap101")){
                                     startActivityForResult(new Intent(Home.this,AdditionalService.class), ApplicationConstant.REQ_ALLSERVICE);
 
