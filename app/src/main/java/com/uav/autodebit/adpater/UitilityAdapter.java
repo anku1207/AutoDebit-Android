@@ -112,7 +112,7 @@ public class UitilityAdapter extends RecyclerView.Adapter<UitilityAdapter.Prodec
 
 
 
-        if(pro.getAdopted()==1 && pro.getMandateAmount()<=Session.getCustomerHighestMandateAmount(mctx)){
+        if(pro.getAdopted()==1 && pro.getMandateAmount()<=pro.getServiceAdopteBMA()){
             holder.serviceactive.setVisibility(View.VISIBLE);
         }else {
             holder.serviceactive.setVisibility(View.GONE);

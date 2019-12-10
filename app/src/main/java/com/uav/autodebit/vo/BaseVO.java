@@ -16,6 +16,7 @@ public class BaseVO {
     private String enachDetails;
 
     private Integer serviceId;
+    private Double serviceAdopteBMA;
 
 
 
@@ -108,5 +109,14 @@ public class BaseVO {
 
     public void setServiceId(Integer serviceId) {
         this.serviceId = serviceId;
+    }
+
+
+    public Double getServiceAdopteBMA() {
+        return serviceAdopteBMA;
+    }
+
+    public void setServiceAdopteBMA(Double serviceAdopteBMA) {
+        this.serviceAdopteBMA = serviceAdopteBMA;
     }
 }

@@ -118,16 +118,12 @@ public class AdditionalService extends AppCompatActivity implements View.OnClick
                    serviceTypeVOS.addAll(utilityServices);
                    serviceTypeVOS.addAll(servicelist);
                    for(ServiceTypeVO serviceTypeVO :serviceTypeVOS){
-                       if(!serviceTypeVO.getServiceTypeId().equals(selectServiceTypeVo.getServiceTypeId()) && serviceTypeVO.getLevel().getLevelId()<=Session.getCustomerLevel(AdditionalService.this)){
+                       if(!serviceTypeVO.getServiceTypeId().equals(selectServiceTypeVo.getServiceTypeId()) && serviceTypeVO.getLevel().getLevelId()<=Session.getCustomerLevel(AdditionalService.this  ) && serviceTypeVO.getAdopted()==0){
                            newList.add(serviceTypeVO);
                        }
                    }
-
-
-
                 }
             }
-
             @Override
             public void doPostExecute() {
                 myAdapter=new ListViewItemCheckboxBaseAdapter(AdditionalService.this, newList, R.layout.checkbox_with_text,(selectServiceTypeVo!=null?selectServiceTypeVo.getServiceTypeId():null));

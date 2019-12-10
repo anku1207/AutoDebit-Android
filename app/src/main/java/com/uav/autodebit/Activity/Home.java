@@ -312,7 +312,7 @@ public class Home extends AppCompatActivity
     private void setHorizontalScrollView(final List<ServiceTypeVO> dataList,  final int layout, final int activity ){
         LinearLayout mGallery = (LinearLayout) findViewById(layout);
         mGallery.removeAllViewsInLayout();
-        level= Session.getCustomerLevel(this);
+        level= Session.getCustomerLevel(Home.this);
         for (final ServiceTypeVO serviceTypeVO: dataList){
 
             //View galView = mInflater.inflate( activity ,  mGallery, false);
@@ -325,7 +325,7 @@ public class Home extends AppCompatActivity
             final ImageView activeservice=galView.findViewById(R.id.serviceactive);
             img.setImageDrawable(Utility.GetImage(this,serviceTypeVO.getAppIcon()));
 
-            if(serviceTypeVO.getAdopted()==1 && serviceTypeVO.getMandateAmount()<=Session.getCustomerHighestMandateAmount(this)){
+            if(serviceTypeVO.getAdopted()==1 && serviceTypeVO.getMandateAmount()<=serviceTypeVO.getServiceAdopteBMA()){
                 activeservice.setVisibility(View.VISIBLE);
             }else {
                 activeservice.setVisibility(View.GONE);
@@ -720,7 +720,8 @@ public class Home extends AppCompatActivity
             }else {
 
                     //set session customer or local cache
-                    Session.set_Data_Sharedprefence(Home.this,Session.CACHE_CUSTOMER,o.toString());
+                    String json = new Gson().toJson(customerVO);
+                    Session.set_Data_Sharedprefence(Home.this,Session.CACHE_CUSTOMER,json);
                     Session.set_Data_Sharedprefence(Home.this, Session.LOCAL_CACHE,customerVO.getLocalCache());
                     loadDateInRecyclerView();
 
@@ -773,9 +774,9 @@ public class Home extends AppCompatActivity
                     startUserClickService(serviceId+"");
 
                     //set session customer or local cache
-                    Session.set_Data_Sharedprefence(Home.this,Session.CACHE_CUSTOMER,response.toString());
+                    String json = new Gson().toJson(customerVO);
+                    Session.set_Data_Sharedprefence(Home.this,Session.CACHE_CUSTOMER,json);
                     Session.set_Data_Sharedprefence(Home.this, Session.LOCAL_CACHE,customerVO.getLocalCache());
-
                     loadDateInRecyclerView();
                 }
             }
