@@ -2,9 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
+    android:layout_margin="50dp"
     android:background="@drawable/paynimo_view_rounded_corner"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <com.paynimo.android.payment.CustomTextView
         android:id="@+id/dialog_one_tv_title"
@@ -13,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
-        android:gravity="left"
+        android:gravity="center"
         android:text=""
         android:textSize="17dp"
         android:textStyle="bold"
@@ -26,7 +27,7 @@
         android:id="@+id/listview"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:scrollbars="none"
+
         >
 
     </ListView>

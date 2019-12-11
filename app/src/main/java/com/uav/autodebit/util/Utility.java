@@ -663,10 +663,8 @@ public class Utility {
 
 
     public static void confirmationDialog(com.uav.autodebit.util.DialogInterface mcxtinter, Context context , JSONArray jsonArray , String Msg , String title,  String... buttons){
-
          String leftButton= (buttons.length==0 ?"Modify":buttons[0]);//(leftButton ==null?"Modify": leftButton);
          String rightButton=(buttons.length<=1 ?"Next":buttons[1]);//(rightButton==null?"Next":rightButton);
-
          try{
 
             final com.uav.autodebit.util.DialogInterface dialogInterface =mcxtinter;
@@ -776,6 +774,59 @@ public class Utility {
         }
     }
 
+
+    public static void showDoubleButtonDialogConfirmation(com.uav.autodebit.util.DialogInterface mcxtinter, Context context , String Msg , String title,  String... buttons){
+        String leftButton= (buttons.length==0 ?"Modify":buttons[0]);//(leftButton ==null?"Modify": leftButton);
+        String rightButton=(buttons.length<=1 ?"Next":buttons[1]);//(rightButton==null?"Next":rightButton);
+        try{
+
+            final com.uav.autodebit.util.DialogInterface dialogInterface =mcxtinter;
+
+            final Dialog var3 = new Dialog(context);
+            var3.requestWindowFeature(1);
+            var3.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            var3.setContentView(R.layout.showdoublebuttondialogconfirmation);
+            var3.setCanceledOnTouchOutside(false);
+            var3.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
+
+            TextView titletext=var3.findViewById(R.id.dialog_one_tv_title);
+            TextView msg=var3.findViewById(R.id.dialog_one_tv_text);
+            Button modify=var3.findViewById(R.id.button1);
+            Button next=var3.findViewById(R.id.button2);
+
+            modify.setText(leftButton);
+            next.setText(rightButton);
+
+            titletext.setText(title);
+            msg.setText(Msg);
+
+
+            modify.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialogInterface.modify(var3);
+                }
+            });
+
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialogInterface.confirm(var3);
+
+                }
+            });
+
+            if(!var3.isShowing())  var3.show();
+
+        }catch (Exception e){
+            Utility.exceptionAlertDialog(context,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+        }
+    }
+
+
+
+
     public static String maskString(String strText, int start, int end, char maskChar)
             throws Exception{
 
@@ -809,7 +860,9 @@ public class Utility {
 
 
 
-    public static void showSingleButtonDialogconfirmation(final Context context, com.uav.autodebit.util.DialogInterface interfacedialog, String title, String msg ) {
+    public static void showSingleButtonDialogconfirmation(final Context context, com.uav.autodebit.util.DialogInterface interfacedialog, String title, String msg ,String... buttons){
+
+        String leftButton= (buttons.length==0 ?"OK":buttons[0]);//(leftButton ==null?"Modify": leftButton);
         final Dialog var3 = new Dialog(context);
 
 
@@ -819,12 +872,15 @@ public class Utility {
         var3.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         var3.setContentView(R.layout.singlebuttondialog);
         var3.setCanceledOnTouchOutside(false);
+        var3.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
         TextView title_text = (TextView)var3.findViewById(R.id.dialog_one_tv_title);
         title_text.setText(title);
         TextView msg_text = (TextView)var3.findViewById(R.id.dialog_one_tv_text);
 
         msg_text.setText(msg);
         Button button = (Button)var3.findViewById(R.id.dialog_one_btn);
+        button.setText(leftButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View var) {
 
@@ -953,12 +1009,12 @@ public class Utility {
         var3.requestWindowFeature(1);
         var3.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         var3.setContentView(R.layout.alertselectdialog);
-        var3.setCanceledOnTouchOutside(false);
+       // var3.setCanceledOnTouchOutside(false);
         TextView title_text = (TextView)var3.findViewById(R.id.dialog_one_tv_title);
         title_text.setText(title);
         ListView listView = (ListView) var3.findViewById(R.id.listview);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter(context, R.layout.activity_listtextview, R.id.textdata, entityText);
+        ArrayAdapter<String> adapter = new ArrayAdapter(context, R.layout.design_list_text_with_card, R.id.textdata, entityText);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -971,7 +1027,7 @@ public class Utility {
 
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(var3.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
         var3.show();

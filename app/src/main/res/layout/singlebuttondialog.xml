@@ -14,7 +14,8 @@
         android:layout_marginTop="5dp"
         android:gravity="left"
         android:text=""
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:textColor="@color/appbar"/>
 
     <com.paynimo.android.payment.CustomTextView
         android:id="@+id/dialog_one_tv_text"
@@ -23,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
-        android:gravity="left"
+        android:gravity="center"
         android:layout_below="@+id/dialog_one_tv_title"
         android:text=""
         android:textSize="15dp" />

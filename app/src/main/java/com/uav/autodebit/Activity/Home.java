@@ -111,7 +111,6 @@ public class Home extends AppCompatActivity
 
 
 
-
         dialog=new ProgressDialog(Home.this);
         pd = new UAVProgressDialog(this);
 
@@ -238,11 +237,21 @@ public class Home extends AppCompatActivity
         //19-10-2018
         loadDateInRecyclerView();
 
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
+        recyclerView.setNestedScrollingEnabled(true);
+        recyclerView.addItemDecoration(new DividerItemDecorator(4,2,false));
+
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new SliderTimer(), 4000, 6000);
+
 
     }
 
 
     public void loadDateInRecyclerView(){
+
+
         //19-10-2018
         Gson gson = new Gson();
         LocalCacheVO  localCacheVO = gson.fromJson( Session.getSessionByKey(this, Session.LOCAL_CACHE), LocalCacheVO.class);
@@ -255,14 +264,7 @@ public class Home extends AppCompatActivity
         viewPager.setAdapter(new BannerAdapter(this, banners ));
         bannerIndicator.setupWithViewPager(viewPager, true);
 
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new SliderTimer(), 4000, 6000);
 
-
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-        recyclerView.setNestedScrollingEnabled(true);
-        recyclerView.addItemDecoration(new DividerItemDecorator(4,2,false));
 
         List<ServiceTypeVO> utilityServices = localCacheVO.getUtilityBills();
         List<ServiceTypeVO> addservice =new ArrayList<>();
@@ -437,6 +439,8 @@ public class Home extends AppCompatActivity
             });
         } catch (Exception e) {
             e.printStackTrace();
+            Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
         }
     }
 
@@ -489,21 +493,22 @@ public class Home extends AppCompatActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK) {
 
-
-        if(requestCode==ApplicationConstant.REQ_ENACH_MANDATE){
+            if (requestCode == ApplicationConstant.REQ_ENACH_MANDATE) {
                 startUserClickService(clickServiceId);
-        }else if(requestCode==ApplicationConstant.REQ_ALLSERVICE){
-            startUserClickService(clickServiceId);
-        }else if(requestCode==ApplicationConstant.REQ_AdditionalService_Add_More){
-            ArrayList<Integer> integers =data.getIntegerArrayListExtra("selectservice");
+            } else if (requestCode == ApplicationConstant.REQ_ALLSERVICE) {
+                startUserClickService(clickServiceId);
+            } else if (requestCode == ApplicationConstant.REQ_AdditionalService_Add_More) {
+                ArrayList<Integer> integers = data.getIntegerArrayListExtra("selectservice");
 
-            double highestAmt=getHighestAmtForService(integers);
-            Intent enachMandate=new Intent(Home.this,Enach_Mandate.class);
-            enachMandate.putExtra("forresutl",true);
-            enachMandate.putExtra("mandateamt",highestAmt);
-            enachMandate.putExtra("selectservice",integers);
-            startActivityForResult(enachMandate,ApplicationConstant.REQ_ENACH_MANDATE);
+                double highestAmt = getHighestAmtForService(integers);
+                Intent enachMandate = new Intent(Home.this, Enach_Mandate.class);
+                enachMandate.putExtra("forresutl", true);
+                enachMandate.putExtra("mandateamt", highestAmt);
+                enachMandate.putExtra("selectservice", integers);
+                startActivityForResult(enachMandate, ApplicationConstant.REQ_ENACH_MANDATE);
+            }
         }
     }
 
@@ -524,6 +529,8 @@ public class Home extends AppCompatActivity
                             startActivityServiceClick(Integer.parseInt(serviceId),Class.forName(getPackageName()+".Activity."+activity_json.get(serviceId)),s,selectServiceType.getMandateAmount());
                         } catch (Exception e) {
                             e.printStackTrace();
+                            Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
                         }
                     },(ServiceClick.OnError)(e)->{
                     }));
@@ -532,6 +539,8 @@ public class Home extends AppCompatActivity
             backgroundAsyncService.execute();
         }catch (Exception e){
             Log.e("error_home",e.getMessage());
+            Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
         }
    }
 
@@ -582,28 +591,60 @@ public class Home extends AppCompatActivity
         try {
             CustomerVO customerVO =(CustomerVO) o;
 
+            Toast.makeText(Home.this, ""+customerVO.getStatusCode(), Toast.LENGTH_SHORT).show();
+
             if(!customerVO.getStatusCode().equals("200")){
-
-                if(customerVO.getStatusCode().equals("ap104")){
-
-                    String[] buttons = {"Cancel","Ok"};
-
-                    Utility.confirmationDialog(new DialogInterface() {
+                if(customerVO.getStatusCode().equals("ap105") || customerVO.getStatusCode().equals("ap107") ||customerVO.getStatusCode().equals("ap102")){
+                    String[] buttons = {"OK"};
+                    Utility.showSingleButtonDialogconfirmation(this, new DialogInterface() {
                         @Override
                         public void confirm(Dialog dialog) {
                             dialog.dismiss();
                             startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                         }
-
                         @Override
                         public void modify(Dialog dialog) {
                             dialog.dismiss();
                         }
-                    },Home.this,null,customerVO.getErrorMsgs().get(0),null,buttons);
+                    },"Alert",customerVO.getErrorMsgs().get(0),buttons);
+                }else if(customerVO.getStatusCode().equals("ap106") || customerVO.getStatusCode().equals("ap103") || customerVO.getStatusCode().equals("ap108")){
+                    String[] buttons = {"New Mandate","Choose Bank"};
+                    Utility.showDoubleButtonDialogConfirmation( new DialogInterface() {
+                        @Override
+                        public void confirm(Dialog dialog) {
+                            dialog.dismiss();
+                            try {
+                                JSONArray arryjson=new JSONArray(customerVO.getAnonymousString());
+                                ArrayList<String> entityText=new ArrayList<>();
+                                ArrayList<Object> entityId=new ArrayList<>();
 
+                                for(int i=0;i<arryjson.length();i++){
+                                    JSONObject jsonObject =arryjson.getJSONObject(i);
+                                    entityText.add(jsonObject.getString("bankName")+"\n"+jsonObject.getString("accountNo"));
+                                    entityId.add(jsonObject.getInt("id"));
+                                }
+                                entityText.add("Add New Bank Mandate");
+                                entityId.add(0);
+                                Utility.alertselectdialog(Home.this,"Choose from existing Bank",entityText,entityId,new AlertSelectDialogClick((AlertSelectDialogClick.OnSuccess)(s)->{
+                                    if(Integer.parseInt(s)!=0){
+                                        setBankForService(serviceId,Integer.parseInt(Session.getCustomerId(Home.this)),Integer.parseInt(s));
+                                    }else {
+                                        startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
+                                    }
+                                }));
+                            }catch (Exception e){
+                                Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
+                            }
+                        }
+                        @Override
+                        public void modify(Dialog dialog) {
+                            dialog.dismiss();
+                            startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
+                        }
+                    },this,customerVO.getErrorMsgs().get(0),"Alert",buttons);
 
                 }else {
-
                     Utility.showSingleButtonDialogconfirmation(Home.this, new DialogInterface() {
                         @Override
                         public void confirm(Dialog dialog) {
@@ -616,15 +657,14 @@ public class Home extends AppCompatActivity
                                     startActivity(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_3"))));
                                     finish();
                                 }else if(customerVO.getStatusCode().equals("L_4")){
-
                                     addMoreService(new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(d)->{
-
                                         startActivityForResult(new Intent(Home.this,AdditionalService.class).putExtra("onactivityresult",true).putExtra("servicelist",selectServiceType),ApplicationConstant.REQ_AdditionalService_Add_More);
                                     },(ConfirmationDialogInterface.OnCancel)(d)->{
                                         try {
                                             startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                                         } catch (Exception e) {
-                                            e.printStackTrace();
+                                            Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
                                         }
                                     }));
                                 }else if(customerVO.getStatusCode().equals("L_5")){
@@ -634,54 +674,31 @@ public class Home extends AppCompatActivity
                                         try {
                                             startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_5"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                                         } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
+                                            Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 
+                                        }
                                     }));
                                 }else if(customerVO.getStatusCode().equals("L_6")){
                                         try {
                                             startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_6"))).putExtra("onactivityresult",true),ApplicationConstant.REQ_AdditionalService_Add_More);
                                         } catch (Exception e) {
-                                            e.printStackTrace();
+                                            Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
                                         }
-
-
                                 }else  if(customerVO.getStatusCode().equals("ap101")){
                                     startActivityForResult(new Intent(Home.this,AdditionalService.class), ApplicationConstant.REQ_ALLSERVICE);
-
-                                }else if(customerVO.getStatusCode().equals("ap102")){
-                                    ArrayList<Integer> integers =new ArrayList<>();
-                                    integers.add(serviceId);
-
-
-                                    startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
-                                }
-                                else if(customerVO.getStatusCode().equals("ap103")){
-
-                                    JSONArray arryjson=new JSONArray(customerVO.getAnonymousString());
-                                    ArrayList<String> entityText=new ArrayList<>();
-                                    ArrayList<Object> entityId=new ArrayList<>();
-
-                                    for(int i=0;i<arryjson.length();i++){
-                                        JSONObject jsonObject =arryjson.getJSONObject(i);
-                                        entityText.add(jsonObject.getString("bankName")+"\n"+jsonObject.getString("accountNo"));
-                                        entityId.add(jsonObject.getInt("id"));
-                                    }
-
-                                    Utility.alertselectdialog(Home.this,customerVO.getErrorMsgs().get(0),entityText,entityId,new AlertSelectDialogClick((AlertSelectDialogClick.OnSuccess)(s)->{
-                                        setBankForService(serviceId,Integer.parseInt(Session.getCustomerId(Home.this)),Integer.parseInt(s));
-                                    }));
                                 }
                             }catch (Exception e){
+                                Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
                             }
                         }
                         @Override
                         public void modify(Dialog dialog) {
                         }
-                    },"",customerVO.getErrorMsgs().get(0));
+                    },"Alert",customerVO.getErrorMsgs().get(0));
                 }
             }else {
-
                     //set session customer or local cache
                     String json = new Gson().toJson(customerVO);
                     Session.set_Data_Sharedprefence(Home.this,Session.CACHE_CUSTOMER,json);
@@ -699,6 +716,8 @@ public class Home extends AppCompatActivity
             }
         }catch (Exception e){
             Log.e("error_serviceClick",e.getMessage());
+            Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
         }
     }
 
