@@ -68,7 +68,7 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.paynimo.android.payment.PaymentModesActivity;
+
 import com.uav.autodebit.Activity.Enach_Mandate;
 import com.uav.autodebit.Activity.Login;
 import com.uav.autodebit.Activity.PanVerification;

@@ -161,7 +161,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.Login"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Activity.BarcodeScanner"
             android:screenOrientation="portrait" />
