@@ -122,6 +122,7 @@ public class UitilityAdapter extends RecyclerView.Adapter<UitilityAdapter.Prodec
             @Override
             public void onClick(View v) {
                 level=null;
+                Utility.enableDisableView(v,false);
 
                 BackgroundAsyncService backgroundAsyncService = new BackgroundAsyncService(pd,true, new BackgroundServiceInterface() {
                     @Override
@@ -136,7 +137,8 @@ public class UitilityAdapter extends RecyclerView.Adapter<UitilityAdapter.Prodec
                                /* switch (pro.getServiceTypeId()){
                                     case 5 :*/
 
-                                        ((Home)mctx).startUserClickService(pro.getServiceTypeId().toString());
+                                        ((Home)mctx).startUserClickService(pro.getServiceTypeId().toString(),v);
+
                                        /* ((Home)mctx).serviceClick(pro.getServiceTypeId(),new ServiceClick((ServiceClick.OnSuccess)(s)->{
                                             CustomerVO customerVO =(CustomerVO) s;
                                             ((Home)mctx).startActivityServiceClick(5,Mobile_Prepaid_Recharge_Service.class,s,pro.getMandateAmount());

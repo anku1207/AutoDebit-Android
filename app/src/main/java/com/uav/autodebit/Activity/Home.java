@@ -343,6 +343,7 @@ public class Home extends AppCompatActivity
                 @Override
                 public void onClick(View view) {
                     activitylayout.setEnabled(false);
+                    Utility.enableDisableView(view,false);
                     BackgroundAsyncService backgroundAsyncService = new BackgroundAsyncService(pd,true, new BackgroundServiceInterface() {
                         @Override
                         public void doInBackGround() {
@@ -357,7 +358,7 @@ public class Home extends AppCompatActivity
                         public void doPostExecute() {
                             activitylayout.setEnabled(true);
                             clickServiceId=activitylayout.getTag().toString();
-                            startUserClickService(activitylayout.getTag().toString());
+                            startUserClickService(activitylayout.getTag().toString(),view);
 
                         }
                     });
@@ -496,9 +497,9 @@ public class Home extends AppCompatActivity
         if(resultCode==RESULT_OK) {
 
             if (requestCode == ApplicationConstant.REQ_ENACH_MANDATE) {
-                startUserClickService(clickServiceId);
+                startUserClickService(clickServiceId,null);
             } else if (requestCode == ApplicationConstant.REQ_ALLSERVICE) {
-                startUserClickService(clickServiceId);
+                startUserClickService(clickServiceId,null);
             } else if (requestCode == ApplicationConstant.REQ_AdditionalService_Add_More) {
                 ArrayList<Integer> integers = data.getIntegerArrayListExtra("selectservice");
 
@@ -512,7 +513,7 @@ public class Home extends AppCompatActivity
         }
     }
 
-   public void startUserClickService(String serviceId){
+   public void startUserClickService(String serviceId,View view){
         try {
             clickServiceId=serviceId;
             selectServiceType=new ServiceTypeVO();
@@ -526,7 +527,7 @@ public class Home extends AppCompatActivity
 
                     serviceClick(Integer.parseInt(serviceId),new ServiceClick((ServiceClick.OnSuccess)(s)->{
                         try {
-                            startActivityServiceClick(Integer.parseInt(serviceId),Class.forName(getPackageName()+".Activity."+activity_json.get(serviceId)),s,selectServiceType.getMandateAmount());
+                            startActivityServiceClick(Integer.parseInt(serviceId),Class.forName(getPackageName()+".Activity."+activity_json.get(serviceId)),s,selectServiceType.getMandateAmount(),view);
                         } catch (Exception e) {
                             e.printStackTrace();
                             Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
@@ -587,9 +588,13 @@ public class Home extends AppCompatActivity
     }
 
 
-    public void startActivityServiceClick(int serviceId,Class classname,Object o,double mandateamt){
+    public void startActivityServiceClick(int serviceId,Class classname,Object o,double mandateamt,View view){
         try {
             CustomerVO customerVO =(CustomerVO) o;
+
+
+            if(view!=null)Utility.enableDisableView(view,true);
+
 
             Toast.makeText(Home.this, ""+customerVO.getStatusCode(), Toast.LENGTH_SHORT).show();
 
@@ -753,7 +758,7 @@ public class Home extends AppCompatActivity
                     }
                     Utility.alertDialog(Home.this,"Alert",sb.toString(),"Ok");
                 }else {
-                    startUserClickService(serviceId+"");
+                    startUserClickService(serviceId+"",null);
 
                     //set session customer or local cache
                     String json = new Gson().toJson(customerVO);
@@ -823,7 +828,7 @@ public class Home extends AppCompatActivity
                     Toast.makeText(Home.this, "bottom_history", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.bottom_help:
-                    Toast.makeText(Home.this, "bottom_help", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(Home.this,Help.class));
                     break;
             }
             return loadFragment(fragment);
