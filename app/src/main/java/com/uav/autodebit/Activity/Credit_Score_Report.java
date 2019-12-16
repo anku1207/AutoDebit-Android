@@ -286,7 +286,7 @@ public class Credit_Score_Report extends AppCompatActivity implements FileDownlo
 
     }
 
-    public void setCustomerBucket(){
+    public void setCustomerBucket() throws Exception{
         Gson gson =new Gson();
 
 
@@ -329,8 +329,6 @@ public class Credit_Score_Report extends AppCompatActivity implements FileDownlo
                 }
             }
         });
-
-
     }
 
     private void showError(String description) {
