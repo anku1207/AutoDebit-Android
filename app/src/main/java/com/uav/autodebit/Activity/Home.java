@@ -503,10 +503,9 @@ public class Home extends AppCompatActivity
             } else if (requestCode == ApplicationConstant.REQ_AdditionalService_Add_More) {
                 ArrayList<Integer> integers = data.getIntegerArrayListExtra("selectservice");
 
-                double highestAmt = getHighestAmtForService(integers);
+               // double highestAmt = getHighestAmtForService(integers);
                 Intent enachMandate = new Intent(Home.this, Enach_Mandate.class);
                 enachMandate.putExtra("forresutl", true);
-                enachMandate.putExtra("mandateamt", highestAmt);
                 enachMandate.putExtra("selectservice", integers);
                 startActivityForResult(enachMandate, ApplicationConstant.REQ_ENACH_MANDATE);
             }
@@ -605,7 +604,7 @@ public class Home extends AppCompatActivity
                         @Override
                         public void confirm(Dialog dialog) {
                             dialog.dismiss();
-                            startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
+                            startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                         }
                         @Override
                         public void modify(Dialog dialog) {
@@ -634,7 +633,7 @@ public class Home extends AppCompatActivity
                                     if(Integer.parseInt(s)!=0){
                                         setBankForService(serviceId,Integer.parseInt(Session.getCustomerId(Home.this)),Integer.parseInt(s));
                                     }else {
-                                        startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
+                                        startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                                     }
                                 }));
                             }catch (Exception e){
@@ -645,7 +644,7 @@ public class Home extends AppCompatActivity
                         @Override
                         public void modify(Dialog dialog) {
                             dialog.dismiss();
-                            startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
+                            startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                         }
                     },this,customerVO.getErrorMsgs().get(0),"Alert",buttons);
 
@@ -666,7 +665,7 @@ public class Home extends AppCompatActivity
                                         startActivityForResult(new Intent(Home.this,AdditionalService.class).putExtra("onactivityresult",true).putExtra("servicelist",selectServiceType),ApplicationConstant.REQ_AdditionalService_Add_More);
                                     },(ConfirmationDialogInterface.OnCancel)(d)->{
                                         try {
-                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
+                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                                         } catch (Exception e) {
                                             Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 
@@ -677,7 +676,7 @@ public class Home extends AppCompatActivity
                                         startActivityForResult(new Intent(Home.this,AdditionalService.class).putExtra("onactivityresult",true).putExtra("servicelist",selectServiceType),ApplicationConstant.REQ_AdditionalService_Add_More);
                                     },(ConfirmationDialogInterface.OnCancel)(d)->{
                                         try {
-                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_5"))).putExtra("onactivityresult",true).putExtra("mandateamt",mandateamt).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
+                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_5"))).putExtra("onactivityresult",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                                         } catch (Exception e) {
                                             Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 

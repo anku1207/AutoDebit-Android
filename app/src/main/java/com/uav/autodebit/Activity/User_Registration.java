@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.uav.autodebit.BO.SignUpBO;
+import com.uav.autodebit.Interface.ConfirmationDialogInterface;
 import com.uav.autodebit.R;
 import com.uav.autodebit.constant.ApplicationConstant;
 import com.uav.autodebit.permission.Session;
@@ -300,7 +301,7 @@ public class User_Registration extends AppCompatActivity {
                     for(int i=0; i<error.size(); i++){
                         sb.append(error.get(i)).append("\n");
                     }
-                    Utility.alertDialog(User_Registration.this,"Alert",sb.toString(),"Ok");
+                    Utility.showSingleButtonDialog(User_Registration.this,"Alert",sb.toString(),false);
 
                 }else {
                     Session.set_Data_Sharedprefence_BoolenvValue(User_Registration.this,Session.CACHE_IS_NEW_USER,false);
@@ -317,7 +318,21 @@ public class User_Registration extends AppCompatActivity {
                         for(int i=0; i<error.size(); i++){
                             sb.append(error.get(i)).append("\n");
                         }
-                        Utility.activityAlertDialog(User_Registration.this,"Alert",sb.toString(),"Ok");
+
+                        Utility.showSingleButtonDialogconfirmation(User_Registration.this, new DialogInterface() {
+                            @Override
+                            public void confirm(Dialog dialog) {
+                                dialog.dismiss();
+                                Intent intent =new Intent(User_Registration.this, Login.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivities(new Intent[]{intent});
+                            }
+                            @Override
+                            public void modify(Dialog dialog) {
+                                dialog.dismiss();
+                            }
+                        }, "Alert", sb.toString());
+
 
                     }
                 }

@@ -84,6 +84,8 @@ public class Enach_Mandate extends AppCompatActivity{
 
 
 
+
+
     Integer customerAuthId;
 
     boolean foractivity=false;
@@ -93,6 +95,9 @@ public class Enach_Mandate extends AppCompatActivity{
     HashMap<String,String> selectbank=new HashMap<>();
 
     ArrayList<Integer> selectServiceIds=new ArrayList<>();
+
+
+    Spinner select_drop;
 
 
 
@@ -113,6 +118,7 @@ public class Enach_Mandate extends AppCompatActivity{
         acno=findViewById(R.id.acno);
         maxamount=findViewById(R.id.maxamount);
         mandatebtn=findViewById(R.id.mandatebtn);
+        select_drop=findViewById(R.id.select_drop);
 
         back_activity_button1=findViewById(R.id.back_activity_button1);
         back_activity_button1.setOnClickListener(new View.OnClickListener() {
@@ -137,15 +143,15 @@ public class Enach_Mandate extends AppCompatActivity{
         /*maxamount.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bankicon, 0, R.drawable.edit, 0);
         maxamount.setEnabled(false);*/
 
-        ifsc = findViewById(R.id.ifsc);
+      //  ifsc = findViewById(R.id.ifsc);
 
         acholdername.setText(Session.getCustomerName(Enach_Mandate.this));
 
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>
-                (this,android.R.layout.select_dialog_item,paths);
+      /*  ArrayAdapter<String> adapter = new ArrayAdapter<String>
+                (this,android.R.layout.select_dialog_item,paths);*/
 
-        ifsc.setThreshold(1);//will start working from first character
+      /*  ifsc.setThreshold(1);//will start working from first character
         ifsc.setAdapter(adapter);//setting the adapter data into the AutoCompleteTextView
         ifsc.setTextColor(Color.BLACK);
 
@@ -157,6 +163,25 @@ public class Enach_Mandate extends AppCompatActivity{
                 bankshortname=selectbank.get(selection);
             }
         });
+*/
+
+        select_drop.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String selection = (String) adapterView.getItemAtPosition(i);
+                bankshortname=selectbank.get(selection);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+
+
 
 
         maxamount.setDrawableClickListener(new DrawableClickListener() {
@@ -195,11 +220,11 @@ public class Enach_Mandate extends AppCompatActivity{
                     maxamount.setError("this filed is required");
                     validation=false;
                 }
-
+/*
                 if(ifsc.getText().toString().equals("")){
                     ifsc.setError("this filed is required");
                     validation=false;
-                }
+                }*/
 
                 if( bankshortname==null){
                     Utility.alertDialog(Enach_Mandate.this,"Alert","Bank is not selected","Ok");
@@ -358,15 +383,20 @@ public class Enach_Mandate extends AppCompatActivity{
                         selectbank.put(object1.getString("name"),object1.getString("id"));
                         paths.add(object1.getString("name"));
                     }
+
+
+                    ArrayAdapter<String>adapter = new ArrayAdapter<String>(Enach_Mandate.this,
+                            android.R.layout.simple_spinner_item,paths);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    select_drop.setAdapter(adapter);
+
                     maxamount.setText(object.getString("minMandateAmt"));
                     minamt=Integer.parseInt(object.getString("minMandateAmt"));
                     errormsz=object.getString("minMandateAmtFailedMsg");
 
-                   /* ArrayAdapter<String>adapter = new ArrayAdapter<String>(Enach_Mandate.this,
-                            android.R.layout.simple_spinner_item,paths);
 
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinner.setAdapter(adapter);*/
+
+
 
                 }
             }
