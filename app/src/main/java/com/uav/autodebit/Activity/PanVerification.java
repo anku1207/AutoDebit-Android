@@ -150,7 +150,12 @@ public class PanVerification extends AppCompatActivity {
         if(customerVO.getPanHolderName()!=null){
             customername.setText(Utility.capitalize(customerVO.getPanHolderName()));
             customername.setEnabled(false);
+        }else {
+            customername.setText(Session.getCustomerName(PanVerification.this));
         }
+
+
+
         if(customerVO.getPanNo()!=null){
             pannumber.setText(customerVO.getPanNo());
         }
