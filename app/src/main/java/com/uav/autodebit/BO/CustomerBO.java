@@ -29,5 +29,14 @@ public class CustomerBO implements Serializable {
 
 
 
+    public static ConnectionVO setCustomerBucket() {
+        ConnectionVO connectionVO = new ConnectionVO();
+        connectionVO.setMethodName("setCustomerBucket");
+        connectionVO.setRequestType(ConnectionVO.REQUEST_POST);
+        return connectionVO;
+    }
+
+
+
 
 }

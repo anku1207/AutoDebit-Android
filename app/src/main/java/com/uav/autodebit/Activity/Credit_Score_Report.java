@@ -29,12 +29,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.anastr.speedviewlib.SpeedView;
-import com.github.anastr.speedviewlib.TubeSpeedometer;
+
 import com.google.gson.Gson;
+import com.uav.autodebit.BO.CustomerBO;
 import com.uav.autodebit.BO.PanCardBO;
 import com.uav.autodebit.R;
 import com.uav.autodebit.constant.ApplicationConstant;
@@ -248,10 +249,18 @@ public class Credit_Score_Report extends AppCompatActivity implements FileDownlo
         proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(Credit_Score_Report.this,Home.class));
-                finish();
+              /*  startActivity(new Intent(Credit_Score_Report.this,Home.class));
+                finish();*/
+                try {
+                    setCustomerBucket();
+                }catch (Exception e){
+                    Utility.exceptionAlertDialog(Credit_Score_Report.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
+                }
+
             }
         });
+
 
         creditreportbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -276,6 +285,54 @@ public class Credit_Score_Report extends AppCompatActivity implements FileDownlo
 
 
     }
+
+    public void setCustomerBucket(){
+        Gson gson =new Gson();
+
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        ConnectionVO connectionVO = CustomerBO.setCustomerBucket();
+
+        CustomerVO customerVO=new CustomerVO();
+
+        customerVO.setCustomerId(Integer.parseInt(Session.getCustomerId(Credit_Score_Report.this)));
+
+        String json =gson.toJson(customerVO);
+
+        params.put("volley", json);
+
+        connectionVO.setParams(params);
+
+        VolleyUtils.makeJsonObjectRequest(this,connectionVO, new VolleyResponseListener() {
+            @Override
+            public void onError(String message) {
+            }
+            @Override
+            public void onResponse(Object resp) throws JSONException {
+                JSONObject response = (JSONObject) resp;
+                Gson gson = new Gson();
+                CustomerVO customerVO = gson.fromJson(response.toString(), CustomerVO.class);
+                if(customerVO.getStatusCode().equals("400")){
+                    //VolleyUtils.furnishErrorMsg(  "Fail" ,response, MainActivity.this);
+                    ArrayList error = (ArrayList) customerVO.getErrorMsgs();
+                    StringBuilder sb = new StringBuilder();
+                    for(int i=0; i<error.size(); i++){
+                        sb.append(error.get(i)).append("\n");
+                    }
+                    Utility.showSingleButtonDialog(Credit_Score_Report.this,"Error !",sb.toString(),false);
+                }else {
+                    String json = gson.toJson(customerVO);
+                    Session.set_Data_Sharedprefence(Credit_Score_Report.this,Session.CACHE_CUSTOMER,json);
+
+                    startActivity(new Intent(Credit_Score_Report.this,Home.class));
+                    finish();
+                }
+            }
+        });
+
+
+    }
+
     private void showError(String description) {
       /*  new AlertDialog.Builder(Credit_Score_Report.this)
                 .setTitle("Error")
