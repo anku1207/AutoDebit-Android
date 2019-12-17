@@ -34,9 +34,10 @@ public class BannerAdapter extends PagerAdapter {
     private List<BannerVO> banners;
 
 
-    public BannerAdapter(Context context, List<BannerVO> banners) {
+    public BannerAdapter(Context context, List<BannerVO> banners ){
         this.context = context;
         this.banners = banners;
+
     }
 
     @Override
@@ -63,6 +64,7 @@ public class BannerAdapter extends PagerAdapter {
         ImageView imgView = (ImageView) view.findViewById(R.id.bannerImage);
         new DiskLruImageCache(context, Utils_Cache.CACHE_FILEPATH_BANNER,Utils_Cache.CACHE_FILE_SIZE, Bitmap.CompressFormat.PNG,100);
         imgView.setImageBitmap(DiskLruImageCache.containsKey(Utils_Cache.BANNER_PREFIX+bannerVO.getBannerId()) ? DiskLruImageCache.getBitmap(Utils_Cache.BANNER_PREFIX+bannerVO.getBannerId()) :null);
+
 
         container.addView(view);
 

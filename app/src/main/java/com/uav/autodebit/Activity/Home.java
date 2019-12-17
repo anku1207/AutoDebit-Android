@@ -21,6 +21,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -261,8 +262,40 @@ public class Home extends AppCompatActivity
         bannerIndicator=(TabLayout) findViewById(R.id.indicator);
 
         banners = localCacheVO.getBanners();
-        viewPager.setAdapter(new BannerAdapter(this, banners ));
+
+        viewPager.setAdapter(new BannerAdapter(this, banners));
         bannerIndicator.setupWithViewPager(viewPager, true);
+
+
+        //view pager change position change text view msg
+
+       /* viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+              TextView textView=  (TextView)findViewById(R.id.textview);
+
+              TranslateAnimation animObj= new TranslateAnimation(0,100, 0, 0);
+              animObj.setDuration(500);
+              textView.startAnimation(animObj);
+
+              textView.setText(position+"sdfsdfsdfdsfsdfdsfs");
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+*/
+
+
 
 
 
