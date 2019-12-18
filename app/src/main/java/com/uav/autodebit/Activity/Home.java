@@ -268,8 +268,9 @@ public class Home extends AppCompatActivity
 
 
         //view pager change position change text view msg
+/*
 
-       /* viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

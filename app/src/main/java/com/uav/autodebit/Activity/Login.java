@@ -80,7 +80,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
         getSupportActionBar().hide();
 
         PermissionHandler.checkpermission(Login.this);
-        fingerprint_authentication =new Fingerprint_Authentication();
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            fingerprint_authentication =new Fingerprint_Authentication();
+        }
+
 
 
 /*
@@ -138,6 +142,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
 
     @TargetApi(Build.VERSION_CODES.M)
     public void startLoginFingerPrint(){
+        if(fingerprint_authentication==null)return;
         fingerprint_authentication.startFingerPrintScanning(this,fingerprintlayout, fingerprinttext, new IFingerPrint() {
             @Override
             public void onAuthenticationError(int errMsgId, CharSequence errString) {
@@ -214,6 +219,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
     @Override
     protected void onPause() {
         super.onPause();
+        if(fingerprint_authentication==null)return;
         fingerprint_authentication.cancel();
     }
 
@@ -501,9 +507,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
     public boolean onTouch(View v, MotionEvent event) {
         switch (v.getId()){
             case R.id.userid:
+                if(fingerprint_authentication==null)break;;
                 fingerprint_authentication.cancel();
-                break;
+
             case R.id.password:
+                if(fingerprint_authentication==null)break;;
                 fingerprint_authentication.cancel();
                 break;
         }
