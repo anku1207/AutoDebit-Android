@@ -567,7 +567,7 @@ public class Home extends AppCompatActivity
 
                         }
                     },(ServiceClick.OnError)(e)->{
-                    }));
+                    }),view);
                 }
             });
             backgroundAsyncService.execute();
@@ -582,7 +582,7 @@ public class Home extends AppCompatActivity
 
 
     // add bank for service
-    public  void serviceClick(int serviceId , ServiceClick serviceClick){
+    public  void serviceClick(int serviceId , ServiceClick serviceClick,View view){
         HashMap<String, Object> params = new HashMap<String, Object>();
         ConnectionVO connectionVO = ServiceBO.addBankForService();
 
@@ -613,6 +613,8 @@ public class Home extends AppCompatActivity
                         sb.append(error.get(i)).append("\n");
                     }
                     Utility.alertDialog(Home.this,"Alert",sb.toString(),"Ok");
+                    if(view!=null)Utility.enableDisableView(view,true);
+
                 }else {
                     serviceClick.onSuccess(customerVO);
                 }

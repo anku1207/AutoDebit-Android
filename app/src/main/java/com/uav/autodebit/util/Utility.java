@@ -375,15 +375,12 @@ public class Utility {
 
 
     public static void  alertDialog(Context context, String title , String msg , String buttonname){
-
         AlertDialog alertDialog;
-
         alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setTitle(title);
         alertDialog.setMessage(msg);
 
-
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, buttonname, new DialogInterface.OnClickListener() {
+       alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, buttonname, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
 
