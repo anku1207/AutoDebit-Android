@@ -325,6 +325,7 @@ public class User_Registration extends AppCompatActivity {
                                 dialog.dismiss();
                                 Intent intent =new Intent(User_Registration.this, Login.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.putExtra("user_mobile",userphone.getText().toString());
                                 startActivities(new Intent[]{intent});
                             }
                             @Override

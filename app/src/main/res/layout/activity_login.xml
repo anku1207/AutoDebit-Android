@@ -206,7 +206,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="bottom|end"
-                android:visibility="gone"
+                android:visibility="visible"
 
                 >
 

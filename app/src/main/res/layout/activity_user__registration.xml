@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:backgroundTint="@color/white"
-            android:hint="Name as on PAN"
+            android:hint="Name as on Pan Card"
             android:digits="@string/NameDigits"
             android:inputType="textCapWords"
             android:maxLines="1"

@@ -119,15 +119,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
         password.setInputType( InputType.TYPE_CLASS_NUMBER);
         password.setTransformationMethod(PasswordTransformationMethod.getInstance());
 
-
-
-
+        userid.setText(getIntent().getStringExtra("user_mobile"));
 
 
         if(Session.check_Exists_key(Login.this,Session.CACHE_USER_LOGINID)){
             userid.setText(Session.getSessionByKey(Login.this,Session.CACHE_USER_LOGINID));
         }
-
         if(!userid.getText().toString().equals("")){
             try {
                 startLoginFingerPrint();
