@@ -457,8 +457,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                         startActivityForResult(intent,100);
                     }
 
-
-
                 }
             }
         });
@@ -469,8 +467,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode==RESULT_OK){
-
-
             if(requestCode==100){
               if(data!=null){
                  if(Integer.parseInt(data.getStringExtra("key"))==(CustomerStatusVO.SIGNUP_MOBILE_OTP_VERIFIED)){
@@ -487,7 +483,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                  }
               }
             }
-
 
             if(requestCode==200){
                 if(data!=null){
