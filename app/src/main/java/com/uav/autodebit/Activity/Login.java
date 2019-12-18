@@ -177,7 +177,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                     }
                 }
                 if(!checkvalid){
-                    Utility.alertDialog(Login.this,"Alert","Enter Valid User id","Ok");
+
+                    Utility.showSingleButtonDialog(Login.this,"Alert","Enter Valid User id",false);
                     return;
                 }
                 loginByFigerprint(userid.getText().toString(),type);
@@ -202,8 +203,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                     for(int i=0; i<error.size(); i++){
                         sb.append(error.get(i)).append("\n");
                     }
-                    Utility.alertDialog(Login.this,"Alert",sb.toString(),"Ok");
-
+                    Utility.showSingleButtonDialog(Login.this,"Alert",sb.toString(),false);
                 }else {
                     String json = gson.toJson(customerVO);
                     Session.set_Data_Sharedprefence(Login.this,Session.CACHE_CUSTOMER,json);
@@ -231,7 +231,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                 break;
             case R.id.forgorpassword:
                 if(userid.getText().toString().equals("")){
-                    Utility.alertDialog(Login.this,"Alert","User Id is Empty","Ok");
+                    Utility.showSingleButtonDialog(Login.this,"Alert","User Id is Empty",false);
                     return;
                 }else {
                     String type=null;
@@ -247,8 +247,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                         }
                     }
                     if(!checkvalid){
-                        Utility.alertDialog(Login.this,"Alert","Enter Valid User id","Ok");
-
+                        Utility.showSingleButtonDialog(Login.this,"Alert","Enter Valid User id",false);
                         return;
                     }
                     forgotPasswordOTP(type,userid.getText().toString().trim());
@@ -258,11 +257,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                 if(userid.getText().toString().equals("") || password.getText().toString().equals("")){
 
                     if(userid.getText().toString().equals("")){
-                        Utility.alertDialog(Login.this,"Alert","User Id is Empty","Ok");
+                        Utility.showSingleButtonDialog(Login.this,"Alert","User Id is Empty",false);
                         return;
                     }
                     if(password.getText().toString().equals("")){
-                        Utility.alertDialog(Login.this,"Alert","Password is Empty","Ok");
+                        Utility.showSingleButtonDialog(Login.this,"Alert","Password is Empty",false);
                         return;
                     }
 
@@ -281,7 +280,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                         }
                     }
                     if(!checkvalid){
-                        Utility.alertDialog(Login.this,"Alert","Enter Valid User id","Ok");
+                        Utility.showSingleButtonDialog(Login.this,"Alert","Enter Valid User id",false);
                         return;
                     }
                     loginviapassword(userid.getText().toString().trim(),password.getText().toString().trim(),type);
@@ -289,7 +288,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
             break;
             case  R.id.  loginviaotpbtn:
                 if(userid.getText().toString().equals("")){
-                    Utility.alertDialog(Login.this,"Alert","User Id is Empty","Ok");
+                    Utility.showSingleButtonDialog(Login.this,"Alert","User Id is Empty",false);
                     return;
                 }else {
                     String type=null;
@@ -306,8 +305,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
 
                     }
                     if(!checkvalid){
-                        Utility.alertDialog(Login.this,"Alert","Enter Valid User id","Ok");
-
+                        Utility.showSingleButtonDialog(Login.this,"Alert","Enter Valid User id",false);
                         return;
                     }
                     resendotpfun(type,userid.getText().toString().trim());
@@ -334,8 +332,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                     for(int i=0; i<error.size(); i++){
                         sb.append(error.get(i)).append("\n");
                     }
-                    Utility.alertDialog(Login.this,"Alert",sb.toString(),"Ok");
-
+                    Utility.showSingleButtonDialog(Login.this,"Alert",sb.toString(),false);
                 }else {
                     String json = gson.toJson(customerVO);
                     Session.set_Data_Sharedprefence(Login.this,Session.CACHE_USER_LOGINID,userid.getText().toString());
@@ -382,8 +379,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                     for(int i=0; i<error.size(); i++){
                         sb.append(error.get(i)).append("\n");
                     }
-                    Utility.alertDialog(Login.this,"Alert",sb.toString(),"Ok");
-
+                    Utility.showSingleButtonDialog(Login.this,"Alert",sb.toString(),false);
                 }else {
                     customerVO.setUserid(userid.getText().toString());
                     customerVO.setLoginType(type);
@@ -440,8 +436,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                     for(int i=0; i<error.size(); i++){
                         sb.append(error.get(i)).append("\n");
                     }
-                    Utility.alertDialog(Login.this,"Alert",sb.toString(),"Ok");
-
+                    Utility.showSingleButtonDialog(Login.this,"Alert",sb.toString(),false);
                 }else {
 
                     customerVO.setUserid(userid.getText().toString());
