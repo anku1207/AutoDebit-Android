@@ -361,7 +361,7 @@ public class Home extends AppCompatActivity
             final ImageView activeservice=galView.findViewById(R.id.serviceactive);
             img.setImageDrawable(Utility.GetImage(this,serviceTypeVO.getAppIcon()));
 
-            if(serviceTypeVO.getAdopted()==1 && serviceTypeVO.getServiceAdopteBMA()!=null && serviceTypeVO.getMandateAmount()<=serviceTypeVO.getServiceAdopteBMA()){
+            if(serviceTypeVO.getAdopted()==1 && serviceTypeVO.getServiceAdopteBMA()!=null){
                 activeservice.setVisibility(View.VISIBLE);
             }else {
                 activeservice.setVisibility(View.GONE);
@@ -376,33 +376,27 @@ public class Home extends AppCompatActivity
             activitylayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    activitylayout.setEnabled(false);
-                    Utility.enableDisableView(view,false);
-                    BackgroundAsyncService backgroundAsyncService = new BackgroundAsyncService(pd,true, new BackgroundServiceInterface() {
-                        @Override
-                        public void doInBackGround() {
-                            Gson gson = new Gson();
-                            LocalCacheVO  localCacheVO = gson.fromJson( Session.getSessionByKey(Home.this, Session.LOCAL_CACHE), LocalCacheVO.class);
-                            List<ServiceTypeVO> serviceTypeVOS = localCacheVO.getSerives();
-
-                            level= Session.getCustomerLevel(Home.this);
-
-                        }
-                        @Override
-                        public void doPostExecute() {
-                            activitylayout.setEnabled(true);
-                            clickServiceId=activitylayout.getTag().toString();
-                            startUserClickService(activitylayout.getTag().toString(),view);
-
-                        }
-                    });
-                    backgroundAsyncService.execute();
+                    if(serviceTypeVO.getAdopted()!=1){
+                        Utility.showSingleButtonDialogconfirmation(Home.this, new DialogInterface() {
+                            @Override
+                            public void confirm(Dialog dialog) {
+                                Utility.enableDisableView(view,false);
+                                startUserClickService(activitylayout.getTag().toString(),view);
+                                dialog.dismiss();
+                            }
+                            @Override
+                            public void modify(Dialog dialog) {
+                                dialog.dismiss();
+                            }
+                        },"Alert",serviceTypeVO.getMessage());
+                    }else{
+                        Utility.enableDisableView(view,false);
+                        startUserClickService(activitylayout.getTag().toString(),view);
+                    }
                 }
             });
         }
     }
-
-   
 
     public void addMoreService(ConfirmationDialogInterface confirmationDialogInterface){
         String[] buttons = {"No","Yes"};
@@ -599,6 +593,7 @@ public class Home extends AppCompatActivity
         VolleyUtils.makeJsonObjectRequest(this,connectionVO , new VolleyResponseListener() {
             @Override
             public void onError(String message) {
+                if(view!=null)Utility.enableDisableView(view,true);
             }
             @Override
             public void onResponse(Object resp) throws JSONException {
@@ -612,7 +607,7 @@ public class Home extends AppCompatActivity
                     for(int i=0; i<error.size(); i++){
                         sb.append(error.get(i)).append("\n");
                     }
-                    Utility.alertDialog(Home.this,"Alert",sb.toString(),"Ok");
+                    Utility.showSingleButtonDialog(Home.this,"Alert",sb.toString(),false);
                     if(view!=null)Utility.enableDisableView(view,true);
 
                 }else {
@@ -697,27 +692,10 @@ public class Home extends AppCompatActivity
                                     startActivity(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_3"))));
                                     finish();
                                 }else if(customerVO.getStatusCode().equals("L_4")){
-                                    addMoreService(new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(d)->{
-                                        startActivityForResult(new Intent(Home.this,AdditionalService.class).putExtra("onactivityresult",true).putExtra("servicelist",selectServiceType),ApplicationConstant.REQ_AdditionalService_Add_More);
-                                    },(ConfirmationDialogInterface.OnCancel)(d)->{
-                                        try {
-                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
-                                        } catch (Exception e) {
-                                            Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+                                    startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
 
-                                        }
-                                    }));
                                 }else if(customerVO.getStatusCode().equals("L_5")){
-                                    addMoreService(new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(d)->{
-                                        startActivityForResult(new Intent(Home.this,AdditionalService.class).putExtra("onactivityresult",true).putExtra("servicelist",selectServiceType),ApplicationConstant.REQ_AdditionalService_Add_More);
-                                    },(ConfirmationDialogInterface.OnCancel)(d)->{
-                                        try {
-                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_5"))).putExtra("onactivityresult",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
-                                        } catch (Exception e) {
-                                            Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
-
-                                        }
-                                    }));
+                                    startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
                                 }else if(customerVO.getStatusCode().equals("L_6")){
                                         try {
                                             startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_6"))).putExtra("onactivityresult",true),ApplicationConstant.REQ_AdditionalService_Add_More);

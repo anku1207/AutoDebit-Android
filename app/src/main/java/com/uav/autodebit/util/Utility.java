@@ -881,6 +881,8 @@ public class Utility {
         var3.getWindow().setBackgroundDrawable(new ColorDrawable(0));
         var3.setContentView(R.layout.singlebuttondialog);
         var3.setCanceledOnTouchOutside(false);
+     //   var3.setCancelable(false);
+
         var3.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
 
         TextView title_text = (TextView)var3.findViewById(R.id.dialog_one_tv_title);

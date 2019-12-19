@@ -177,8 +177,6 @@
                  android:background="@drawable/cornerbutton"
                  android:textColor="@color/white"
                  />
-
-
          </LinearLayout>
 
 

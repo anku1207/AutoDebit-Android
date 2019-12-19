@@ -44,6 +44,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.uav.autodebit.BO.MandateBO;
 import com.uav.autodebit.BO.MetroBO;
+import com.uav.autodebit.BO.ServiceBO;
 import com.uav.autodebit.BO.SignUpBO;
 import com.uav.autodebit.R;
 import com.uav.autodebit.constant.ApplicationConstant;
@@ -58,6 +59,7 @@ import com.uav.autodebit.vo.CustomerStatusVO;
 import com.uav.autodebit.vo.CustomerVO;
 import com.uav.autodebit.vo.DMRC_Customer_CardVO;
 import com.uav.autodebit.vo.LocalCacheVO;
+import com.uav.autodebit.vo.ServiceChargesVO;
 import com.uav.autodebit.volley.VolleyResponseListener;
 import com.uav.autodebit.volley.VolleyUtils;
 
@@ -76,15 +78,11 @@ public class Enach_Mandate extends AppCompatActivity{
     TextView textbox;
     UAVEditText maxamount;
     AutoCompleteTextView ifsc;
-    String bankshortname=null;
+    String bankshortname;
     String errormsz;
 
     ImageView back_activity_button1;
     int minamt=0;
-
-
-
-
 
     Integer customerAuthId;
 
@@ -107,9 +105,14 @@ public class Enach_Mandate extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enach__mandate);
         getSupportActionBar().hide();
+
+        foractivity=getIntent().getBooleanExtra("foractivity",true);
+        selectServiceIds=getIntent().getIntegerArrayListExtra("selectservice");
+
         banklist();
 
         customerAuthId=null;
+        bankshortname=null;
 
         textbox=findViewById(R.id.textbox);
 
@@ -128,17 +131,6 @@ public class Enach_Mandate extends AppCompatActivity{
             }
         });
 
-        foractivity=getIntent().getBooleanExtra("foractivity",true);
-        double mandateamt=getIntent().getDoubleExtra("mandateamt",0.0);
-        selectServiceIds=getIntent().getIntegerArrayListExtra("selectservice");
-
-
-        if(mandateamt!=0.0){
-            maxamount.setText((int)mandateamt+"");
-            maxamount.setEnabled(false);
-            minamt=(int)mandateamt;
-            //errormsz=object.getString("minMandateAmtFailedMsg");
-        }
 
         /*maxamount.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bankicon, 0, R.drawable.edit, 0);
         maxamount.setEnabled(false);*/
@@ -290,13 +282,6 @@ public class Enach_Mandate extends AppCompatActivity{
         }catch (Exception e){
             Utility.exceptionAlertDialog(Enach_Mandate.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
         }
-
-
-
-
-
-
-
     }
 
     public void mandatebank(){
@@ -362,7 +347,25 @@ public class Enach_Mandate extends AppCompatActivity{
 
     public void banklist(){
 
-        VolleyUtils.makeJsonObjectRequest(this, MandateBO.enachBankList(), new VolleyResponseListener() {
+
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        ConnectionVO connectionVO = MandateBO.enachBankList();
+
+        ServiceChargesVO serviceChargesVO=new ServiceChargesVO();
+        serviceChargesVO.setAnonymousInteger(Integer.valueOf(Session.getCustomerId(this)));
+        serviceChargesVO.setAnonymousString(selectServiceIds!=null?selectServiceIds.toString():null);
+
+
+        Gson gson =new Gson();
+        String json = gson.toJson(serviceChargesVO);
+        params.put("volley", json);
+        connectionVO.setParams(params);
+        Log.w("addBankForService",params.toString());
+
+
+
+
+        VolleyUtils.makeJsonObjectRequest(this,connectionVO, new VolleyResponseListener() {
             @Override
             public void onError(String message) {
             }
@@ -372,9 +375,16 @@ public class Enach_Mandate extends AppCompatActivity{
 
                 Log.w("responsesignup",response.toString());
                 if(response.get("status").equals("fail")){
-                    Utility.showSingleButtonDialog(Enach_Mandate.this,"Error !",response.getString("errorMsg"),false);
+                    Utility.showSingleButtonDialog(Enach_Mandate.this,"Error !",response.getString("errorMsg"),true);
 
                 }else {
+
+                    if(response.has("customerJson")){
+                        CustomerVO customerVO = gson.fromJson(response.getString("customerJson"), CustomerVO.class);
+                        String json = gson.toJson(customerVO);
+                        Session.set_Data_Sharedprefence(Enach_Mandate.this,Session.CACHE_CUSTOMER,json);
+                    }
+
                     JSONObject object = new JSONObject(response.getString("result"));
                     JSONArray jsonArray=object.getJSONArray("data");
 
@@ -390,13 +400,9 @@ public class Enach_Mandate extends AppCompatActivity{
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     select_drop.setAdapter(adapter);
 
-                    maxamount.setText(object.getString("minMandateAmt"));
-                    minamt=Integer.parseInt(object.getString("minMandateAmt"));
+                    maxamount.setText((int)(Double.parseDouble(object.getString("minMandateAmt")))+"");
+                    minamt=(int)(Double.parseDouble(object.getString("minMandateAmt")));
                     errormsz=object.getString("minMandateAmtFailedMsg");
-
-
-
-
 
                 }
             }
