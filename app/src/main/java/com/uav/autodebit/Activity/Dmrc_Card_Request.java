@@ -260,21 +260,21 @@ public class Dmrc_Card_Request extends AppCompatActivity implements View.OnClick
                 canceldialog.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        var3.hide();
+                        var3.dismiss();
                     }
                 });
 
                 modify.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        var3.hide();
+                        var3.dismiss();
                     }
                 });
 
                 next.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
+                        var3.dismiss();
 
                         if(bmp==null){
                             saveDmrcCardInServer(var3);
