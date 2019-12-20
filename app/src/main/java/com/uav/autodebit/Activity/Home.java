@@ -780,7 +780,7 @@ public class Home extends AppCompatActivity
                     for(int i=0; i<error.size(); i++){
                         sb.append(error.get(i)).append("\n");
                     }
-                    Utility.alertDialog(Home.this,"Alert",sb.toString(),"Ok");
+                    Utility.showSingleButtonDialog(Home.this,"Alert",sb.toString(),false);
                 }else {
                     startUserClickService(serviceId+"",null);
 

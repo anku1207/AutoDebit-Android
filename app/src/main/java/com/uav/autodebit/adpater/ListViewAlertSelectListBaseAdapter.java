@@ -71,6 +71,12 @@ public class ListViewAlertSelectListBaseAdapter extends BaseAdapter {
         textView1.setText(customerAuthServiceVO.getBankName()!=null?customerAuthServiceVO.getBankName():"");
         textView2.setText(customerAuthServiceVO.getProviderTokenId()!=null?customerAuthServiceVO.getProviderTokenId():"");
         textView3.setText(customerAuthServiceVO.getAnonymousString()!=null?customerAuthServiceVO.getAnonymousString()+"":"");
+
+        if(customerAuthServiceVO.getCustomerAuthId()==0){
+            textView2.setTextColor(context.getResources().getColorStateList(R.color.appbar));
+        }
+
+
         return convertView;
     }
 
