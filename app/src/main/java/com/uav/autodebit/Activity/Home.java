@@ -44,8 +44,10 @@ import com.uav.autodebit.util.BackgroundServiceInterface;
 import com.uav.autodebit.util.DialogInterface;
 import com.uav.autodebit.util.ExceptionHandler;
 import com.uav.autodebit.util.Utility;
+import com.uav.autodebit.vo.AuthStatusVO;
 import com.uav.autodebit.vo.BannerVO;
 import com.uav.autodebit.vo.ConnectionVO;
+import com.uav.autodebit.vo.CustomerAuthServiceVO;
 import com.uav.autodebit.vo.CustomerVO;
 import com.uav.autodebit.vo.DMRC_Customer_CardVO;
 import com.uav.autodebit.vo.LocalCacheVO;
@@ -377,21 +379,15 @@ public class Home extends AppCompatActivity
                 @Override
                 public void onClick(View view) {
                     if(serviceTypeVO.getAdopted()!=1){
-                        Utility.showSingleButtonDialogconfirmation(Home.this, new DialogInterface() {
-                            @Override
-                            public void confirm(Dialog dialog) {
-                                Utility.enableDisableView(view,false);
-                                startUserClickService(activitylayout.getTag().toString(),view);
-                                dialog.dismiss();
-                            }
-                            @Override
-                            public void modify(Dialog dialog) {
-                                dialog.dismiss();
-                            }
-                        },"Alert",serviceTypeVO.getMessage());
+                        Utility.showSingleButtonDialogconfirmation(Home.this, new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(ok)->{
+                            Utility.enableDisableView(view,false);
+                            startUserClickService(activitylayout.getTag().toString(),view);
+                            ok.dismiss();
+                        }),"Alert",serviceTypeVO.getMessage());
                     }else{
                         Utility.enableDisableView(view,false);
                         startUserClickService(activitylayout.getTag().toString(),view);
+
                     }
                 }
             });
@@ -523,9 +519,24 @@ public class Home extends AppCompatActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK) {
-
             if (requestCode == ApplicationConstant.REQ_ENACH_MANDATE) {
-                startUserClickService(clickServiceId,null);
+                ArrayList<Integer> enachActServiceIds = data.getIntegerArrayListExtra("selectservice");
+                int [] showDialogServiceIds={1,2,3,4};
+                boolean showDialogValidate=false;
+                int i=0;
+                do{
+                    if(enachActServiceIds.contains(showDialogServiceIds[i])) showDialogValidate = true;
+                    i++;
+                }while(i<showDialogServiceIds.length);{
+                    if(showDialogValidate){
+                        Utility.showSingleButtonDialogconfirmation(this,new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(ok)->{
+                            ok.dismiss();
+                            startUserClickService(clickServiceId,null);
+                        }),"Alert",data.getStringExtra("msg"));
+                    }else {
+                        startUserClickService(clickServiceId,null);
+                    }
+                }
             } else if (requestCode == ApplicationConstant.REQ_ALLSERVICE) {
                 startUserClickService(clickServiceId,null);
             } else if (requestCode == ApplicationConstant.REQ_AdditionalService_Add_More) {
@@ -536,6 +547,7 @@ public class Home extends AppCompatActivity
                 enachMandate.putExtra("forresutl", true);
                 enachMandate.putExtra("selectservice", integers);
                 startActivityForResult(enachMandate, ApplicationConstant.REQ_ENACH_MANDATE);
+
             }
         }
     }
@@ -631,17 +643,10 @@ public class Home extends AppCompatActivity
             if(!customerVO.getStatusCode().equals("200")){
                 if(customerVO.getStatusCode().equals("ap105") || customerVO.getStatusCode().equals("ap107") ||customerVO.getStatusCode().equals("ap102")){
                     String[] buttons = {"OK"};
-                    Utility.showSingleButtonDialogconfirmation(this, new DialogInterface() {
-                        @Override
-                        public void confirm(Dialog dialog) {
-                            dialog.dismiss();
-                            startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
-                        }
-                        @Override
-                        public void modify(Dialog dialog) {
-                            dialog.dismiss();
-                        }
-                    },"Alert",customerVO.getErrorMsgs().get(0),buttons);
+                    Utility.showSingleButtonDialogconfirmation(this, new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(ok)->{
+                        ok.dismiss();
+                        startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
+                    }),"Alert",customerVO.getErrorMsgs().get(0),buttons);
                 }else if(customerVO.getStatusCode().equals("ap106") || customerVO.getStatusCode().equals("ap103") || customerVO.getStatusCode().equals("ap108")){
                     String[] buttons = {"New Mandate","Choose Bank"};
                     Utility.showDoubleButtonDialogConfirmation( new DialogInterface() {
@@ -649,19 +654,32 @@ public class Home extends AppCompatActivity
                         public void confirm(Dialog dialog) {
                             dialog.dismiss();
                             try {
-                                JSONArray arryjson=new JSONArray(customerVO.getAnonymousString());
-                                ArrayList<String> entityText=new ArrayList<>();
-                                ArrayList<Object> entityId=new ArrayList<>();
 
+                                JSONArray arryjson=new JSONArray(customerVO.getAnonymousString());
+
+                                ArrayList<CustomerAuthServiceVO> customerAuthServiceArry=new ArrayList<>();
                                 for(int i=0;i<arryjson.length();i++){
                                     JSONObject jsonObject =arryjson.getJSONObject(i);
-                                    entityText.add(jsonObject.getString("bankName")+"\n"+jsonObject.getString("accountNo"));
-                                    entityId.add(jsonObject.getInt("id"));
+                                    CustomerAuthServiceVO customerAuthServiceVO =new CustomerAuthServiceVO();
+                                    customerAuthServiceVO.setBankName(jsonObject.getString("bankName"));
+                                    customerAuthServiceVO.setProviderTokenId(jsonObject.getString("mandateId"));
+                                    customerAuthServiceVO.setCustomerAuthId(jsonObject.getInt("id"));
+                                    customerAuthServiceVO.setAnonymousString(jsonObject.getString("status"));
+                                    customerAuthServiceArry.add(customerAuthServiceVO);
                                 }
-                                entityText.add("Add New Bank Mandate");
-                                entityId.add(0);
-                                Utility.alertselectdialog(Home.this,"Choose from existing Bank",entityText,entityId,new AlertSelectDialogClick((AlertSelectDialogClick.OnSuccess)(s)->{
-                                    if(Integer.parseInt(s)!=0){
+
+
+                                CustomerAuthServiceVO customerAuthServiceVO =new CustomerAuthServiceVO();
+                                customerAuthServiceVO.setBankName(null);
+                                customerAuthServiceVO.setProviderTokenId("Add New Mandate");
+                                customerAuthServiceVO.setCustomerAuthId(0);
+                                customerAuthServiceVO.setAnonymousString(null);
+                                customerAuthServiceArry.add(customerAuthServiceVO);
+
+
+                                Utility.alertselectdialog(Home.this,"Choose from existing Bank",customerAuthServiceArry,new AlertSelectDialogClick((AlertSelectDialogClick.OnSuccess)(s)->{
+                                    if(!s.equals("0")){
+                                        Log.w("Home_value",s);
                                         setBankForService(serviceId,Integer.parseInt(Session.getCustomerId(Home.this)),Integer.parseInt(s));
                                     }else {
                                         startActivityForResult(new Intent(Home.this,Enach_Mandate.class).putExtra("forresutl",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
@@ -680,41 +698,34 @@ public class Home extends AppCompatActivity
                     },this,customerVO.getErrorMsgs().get(0),"Alert",buttons);
 
                 }else {
-                    Utility.showSingleButtonDialogconfirmation(Home.this, new DialogInterface() {
-                        @Override
-                        public void confirm(Dialog dialog) {
-                            dialog.dismiss();
-                            try {
-                                if(customerVO.getStatusCode().equals("L_2")){
-                                    startActivity(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_2"))));
-                                    finish();
-                                }else if(customerVO.getStatusCode().equals("L_3")){
-                                    startActivity(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_3"))));
-                                    finish();
-                                }else if(customerVO.getStatusCode().equals("L_4")){
-                                    startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
+                    Utility.showSingleButtonDialogconfirmation(Home.this, new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(ok)->{
+                        try {
+                            ok.dismiss();
+                            if(customerVO.getStatusCode().equals("L_2")){
+                                startActivity(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_2"))));
+                                finish();
+                            }else if(customerVO.getStatusCode().equals("L_3")){
+                                startActivity(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_3"))));
+                                finish();
+                            }else if(customerVO.getStatusCode().equals("L_4")){
+                                startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_5"))).putExtra("onactivityresult",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
+                            }else if(customerVO.getStatusCode().equals("L_5")){
+                                startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_5"))).putExtra("onactivityresult",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
+                            }else if(customerVO.getStatusCode().equals("L_6")){
+                                try {
+                                    startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_6"))).putExtra("onactivityresult",true),ApplicationConstant.REQ_AdditionalService_Add_More);
+                                } catch (Exception e) {
+                                    Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 
-                                }else if(customerVO.getStatusCode().equals("L_5")){
-                                    startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_4"))).putExtra("onactivityresult",true).putExtra("selectservice",new ArrayList<Integer>( Arrays.asList(serviceId))),ApplicationConstant.REQ_ENACH_MANDATE);
-                                }else if(customerVO.getStatusCode().equals("L_6")){
-                                        try {
-                                            startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_6"))).putExtra("onactivityresult",true),ApplicationConstant.REQ_AdditionalService_Add_More);
-                                        } catch (Exception e) {
-                                            Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
-
-                                        }
-                                }else  if(customerVO.getStatusCode().equals("ap101")){
-                                    startActivityForResult(new Intent(Home.this,AdditionalService.class), ApplicationConstant.REQ_ALLSERVICE);
                                 }
-                            }catch (Exception e){
-                                Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
-
+                            }else  if(customerVO.getStatusCode().equals("ap101")){
+                                startActivityForResult(new Intent(Home.this,AdditionalService.class), ApplicationConstant.REQ_ALLSERVICE);
                             }
+                        }catch (Exception e){
+                            Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
                         }
-                        @Override
-                        public void modify(Dialog dialog) {
-                        }
-                    },"Alert",customerVO.getErrorMsgs().get(0));
+                    }),"Alert",customerVO.getErrorMsgs().get(0));
                 }
             }else {
                     //set session customer or local cache

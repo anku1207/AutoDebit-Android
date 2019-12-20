@@ -69,12 +69,17 @@ import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
+import com.uav.autodebit.Activity.AdditionalService;
 import com.uav.autodebit.Activity.Enach_Mandate;
 import com.uav.autodebit.Activity.Login;
 import com.uav.autodebit.Activity.PanVerification;
 import com.uav.autodebit.Interface.AlertSelectDialogClick;
+import com.uav.autodebit.Interface.ConfirmationDialogInterface;
 import com.uav.autodebit.R;
+import com.uav.autodebit.adpater.ListViewAlertSelectListBaseAdapter;
+import com.uav.autodebit.adpater.ListViewItemCheckboxBaseAdapter;
 import com.uav.autodebit.constant.ApplicationConstant;
+import com.uav.autodebit.vo.CustomerAuthServiceVO;
 import com.uav.autodebit.volley.VolleyUtils;
 
 import org.jetbrains.annotations.Nullable;
@@ -869,13 +874,11 @@ public class Utility {
 
 
 
-    public static void showSingleButtonDialogconfirmation(final Context context, com.uav.autodebit.util.DialogInterface interfacedialog, String title, String msg ,String... buttons){
+    public static void showSingleButtonDialogconfirmation(final Context context, ConfirmationDialogInterface confirmationDialogInterface, String title, String msg , String... buttons){
 
         String leftButton= (buttons.length==0 ?"OK":buttons[0]);//(leftButton ==null?"Modify": leftButton);
         final Dialog var3 = new Dialog(context);
 
-
-        final com.uav.autodebit.util.DialogInterface dialogInterface1 =interfacedialog;
 
         var3.requestWindowFeature(1);
         var3.getWindow().setBackgroundDrawable(new ColorDrawable(0));
@@ -894,8 +897,7 @@ public class Utility {
         button.setText(leftButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View var) {
-
-                dialogInterface1.confirm(var3);
+                confirmationDialogInterface.onOk(var3);
             }
         });
         var3.show();
@@ -1015,24 +1017,29 @@ public class Utility {
     }
 
 
-    public static void alertselectdialog(Context context, String title, ArrayList<String> entityText, ArrayList<Object> entityId, AlertSelectDialogClick alertSelectDialogClick){
-        final Dialog var3 = new Dialog(context);
-        var3.requestWindowFeature(1);
-        var3.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-        var3.setContentView(R.layout.alertselectdialog);
-       // var3.setCanceledOnTouchOutside(false);
-        TextView title_text = (TextView)var3.findViewById(R.id.dialog_one_tv_title);
-        title_text.setText(title);
-        ListView listView = (ListView) var3.findViewById(R.id.listview);
+    public static void alertselectdialog(Context context, String title, ArrayList<CustomerAuthServiceVO> dataArray, AlertSelectDialogClick alertSelectDialogClick){
+         final Dialog var3 = new Dialog(context);
+         var3.requestWindowFeature(1);
+         var3.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+         var3.setContentView(R.layout.alertselectdialog);
+         // var3.setCanceledOnTouchOutside(false);
+         TextView title_text = (TextView)var3.findViewById(R.id.dialog_one_tv_title);
+         title_text.setText(title);
+         ListView listView = (ListView) var3.findViewById(R.id.listview);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter(context, R.layout.design_list_text_with_card, R.id.textdata, entityText);
-        listView.setAdapter(adapter);
+
+
+         ListViewAlertSelectListBaseAdapter myAdapter=new ListViewAlertSelectListBaseAdapter(context, dataArray, R.layout.design_list_text_with_card);
+
+
+        listView.setAdapter(myAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 var3.dismiss();
-                alertSelectDialogClick.onSuccess(entityId.get(i).toString());
+                CustomerAuthServiceVO customerAuthServiceVO=dataArray.get(i);
+                alertSelectDialogClick.onSuccess(String.valueOf(customerAuthServiceVO.getCustomerAuthId()));
             }
         });
 

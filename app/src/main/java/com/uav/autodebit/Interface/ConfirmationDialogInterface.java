@@ -18,6 +18,8 @@ public class ConfirmationDialogInterface {
     }
 
 
+
+
     public ConfirmationDialogInterface(OnOk onOk) {
         this.onOk = onOk;
     }

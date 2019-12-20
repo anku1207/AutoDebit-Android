@@ -492,7 +492,10 @@ public class Enach_Mandate extends AppCompatActivity{
                         startActivity(new Intent(Enach_Mandate.this,SI_First_Data.class));
                     }else {
                         Intent intent =new Intent();
-                        setResult(Activity.RESULT_OK,intent);
+                        intent.putExtra("selectservice",selectServiceIds);
+                        intent.putExtra("msg",customerVO.getAnonymousString());
+                        setResult(RESULT_OK,intent);
+                        finish();
                     }
                     finish();
 

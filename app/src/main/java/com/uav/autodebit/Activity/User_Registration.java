@@ -319,20 +319,17 @@ public class User_Registration extends AppCompatActivity {
                             sb.append(error.get(i)).append("\n");
                         }
 
-                        Utility.showSingleButtonDialogconfirmation(User_Registration.this, new DialogInterface() {
-                            @Override
-                            public void confirm(Dialog dialog) {
-                                dialog.dismiss();
-                                Intent intent =new Intent(User_Registration.this, Login.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.putExtra("user_mobile",userphone.getText().toString());
-                                startActivities(new Intent[]{intent});
-                            }
-                            @Override
-                            public void modify(Dialog dialog) {
-                                dialog.dismiss();
-                            }
-                        }, "Alert", sb.toString());
+                        Utility.showSingleButtonDialogconfirmation(User_Registration.this,new ConfirmationDialogInterface((ConfirmationDialogInterface.OnOk)(ok)->{
+                            ok.dismiss();
+                            Intent intent =new Intent(User_Registration.this, Login.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.putExtra("user_mobile",userphone.getText().toString());
+                            startActivities(new Intent[]{intent});
+                        }), "Alert", sb.toString());
+
+
+
+
 
 
                     }
