@@ -38,6 +38,8 @@ public class DMRC_Cards_List extends AppCompatActivity implements View.OnClickLi
     RecyclerView recyclerView;
     ArrayList<DMRC_Customer_CardVO> listforcard=new ArrayList<>();
 
+    DMRC_Customer_CardVO dmrc_customer_cardVO;
+
     TextView addoncard;
     ImageView back_activity_button;
     List<ServiceTypeVO> serviceTypeVOS;
@@ -79,14 +81,16 @@ public class DMRC_Cards_List extends AppCompatActivity implements View.OnClickLi
 
 
 
-        listforcard= (ArrayList<DMRC_Customer_CardVO>) Utility.fromJson(getIntent().getStringExtra("dmrccard"), new TypeToken<ArrayList<DMRC_Customer_CardVO>>() { }.getType());
+       //listforcard= (ArrayList<DMRC_Customer_CardVO>) Utility.fromJson(getIntent().getStringExtra("dmrccard"), new TypeToken<ArrayList<DMRC_Customer_CardVO>>() { }.getType());
+
+        dmrc_customer_cardVO=gson.fromJson(getIntent().getStringExtra("dmrccard"), DMRC_Customer_CardVO.class);
+
+        listforcard= (ArrayList<DMRC_Customer_CardVO>) dmrc_customer_cardVO.getDmrcCustomerList();
 
         addoncard=findViewById(R.id.addoncard);
         back_activity_button=findViewById(R.id.back_activity_button);
 
-
-        addoncard.setText("Add-on Card");
-
+        addoncard.setText(dmrc_customer_cardVO.getActionname());
 
         addoncard.setOnClickListener(this);
         back_activity_button.setOnClickListener(this);
@@ -146,9 +150,14 @@ public class DMRC_Cards_List extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.addoncard:
-                startActivity(new Intent(DMRC_Cards_List.this,Dmrc_Card_Request.class).putExtra("isdisable",false));
-                finish();
-                break;
+                if(dmrc_customer_cardVO.isEventIs()){
+                    startActivity(new Intent(DMRC_Cards_List.this,Dmrc_Card_Request.class).putExtra("isdisable",false));
+                    finish();
+                    break;
+                }else{
+                    Toast.makeText(this, "sdfsfsdfd", Toast.LENGTH_SHORT).show();
+                    break;
+                }
             case R.id.back_activity_button:
                 finish();
                 break;

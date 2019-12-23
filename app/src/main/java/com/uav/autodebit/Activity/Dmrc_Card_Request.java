@@ -359,7 +359,7 @@ public class Dmrc_Card_Request extends AppCompatActivity implements View.OnClick
                     }else {
 
                         Intent intent =new Intent(Dmrc_Card_Request.this,DMRC_Cards_List.class);
-                        intent.putExtra("dmrccard",Utility.toJson(dmrc_customer_cardVO.getDmrcCustomerList()));
+                        intent.putExtra("dmrccard",gson.toJson(dmrc_customer_cardVO));
                         startActivity(intent);
                         finish();
                     }

@@ -14,9 +14,9 @@ public class BaseVO {
     private Integer anonymousInteger;
     private String localCache;
     private String enachDetails;
-
     private Integer serviceId;
     private Double serviceAdopteBMA;
+    private boolean eventIs;
 
 
 
@@ -118,5 +118,13 @@ public class BaseVO {
 
     public void setServiceAdopteBMA(Double serviceAdopteBMA) {
         this.serviceAdopteBMA = serviceAdopteBMA;
+    }
+
+    public boolean isEventIs() {
+        return eventIs;
+    }
+
+    public void setEventIs(boolean eventIs) {
+        this.eventIs = eventIs;
     }
 }

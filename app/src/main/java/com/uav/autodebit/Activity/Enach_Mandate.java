@@ -487,6 +487,8 @@ public class Enach_Mandate extends AppCompatActivity{
                 }else {
                     String json = gson.toJson(customerVO);
                     Session.set_Data_Sharedprefence(Enach_Mandate.this,Session.CACHE_CUSTOMER,json);
+                    Session.set_Data_Sharedprefence(Enach_Mandate.this, Session.LOCAL_CACHE,customerVO.getLocalCache());
+
                     // startActivity(new Intent(Enach_Mandate.this,Paynimo_HDFC.class));
                     if (!foractivity) {
                         startActivity(new Intent(Enach_Mandate.this,SI_First_Data.class));

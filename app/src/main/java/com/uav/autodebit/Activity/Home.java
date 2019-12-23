@@ -448,10 +448,9 @@ public class Home extends AppCompatActivity
                         Session.set_Data_Sharedprefence(Home.this,Session.CACHE_DMRC_MIN_CARD_CHARGE,dmrc_customer_cardVO.getAnonymousString());
 
                         if(dmrc_customer_cardVO.getDmrcCustomerList().size()>0){
-
-
                             Intent intent =new Intent(Home.this,DMRC_Cards_List.class);
-                            intent.putExtra("dmrccard",Utility.toJson(dmrc_customer_cardVO.getDmrcCustomerList()));
+
+                            intent.putExtra("dmrccard",gson.toJson(dmrc_customer_cardVO));
                             startActivity(intent);
                         }else {
                             Intent intent =new Intent(Home.this,Dmrc_Card_Request.class);
@@ -520,6 +519,7 @@ public class Home extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK) {
             if (requestCode == ApplicationConstant.REQ_ENACH_MANDATE) {
+                loadDateInRecyclerView();
                 ArrayList<Integer> enachActServiceIds = data.getIntegerArrayListExtra("selectservice");
                 int [] showDialogServiceIds={1,2,3,4};
                 boolean showDialogValidate=false;

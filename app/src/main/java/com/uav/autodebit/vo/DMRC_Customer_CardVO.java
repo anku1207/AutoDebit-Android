@@ -3,7 +3,7 @@ package com.uav.autodebit.vo;
 import java.io.Serializable;
 import java.util.List;
 
-public class DMRC_Customer_CardVO extends BannerVO implements Serializable {
+public class DMRC_Customer_CardVO extends BaseVO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -20,6 +20,9 @@ public class DMRC_Customer_CardVO extends BannerVO implements Serializable {
     private List<DMRC_Customer_CardVO> dmrcCustomerList;
 
     private Long issueDate;
+
+    public DMRC_Customer_CardVO() {
+    }
 
     public Integer getDmrcid() {
         return dmrcid;
