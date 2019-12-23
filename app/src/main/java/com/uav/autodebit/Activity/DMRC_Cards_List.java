@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.paynimo.android.payment.CardTypeParser.getContext;
 
 public class DMRC_Cards_List extends AppCompatActivity implements View.OnClickListener {
 
@@ -66,6 +65,13 @@ public class DMRC_Cards_List extends AppCompatActivity implements View.OnClickLi
         Log.w("banners",imageUrls.toString());
 
         viewPager.setAdapter(new ImageSliderAdapter(this, imageUrls ));
+        /*viewPager.setClipToPadding(false);
+        // set padding manually, the more you set the padding the more you see of prev & next page
+        viewPager.setPadding(200, 0, 200, 0);
+        // sets a margin b/w individual pages to ensure that there is a gap b/w them
+        viewPager.setPageMargin(20);*/
+
+
         bannerIndicator.setupWithViewPager(viewPager, true);
 
         Timer timer = new Timer();
@@ -77,6 +83,10 @@ public class DMRC_Cards_List extends AppCompatActivity implements View.OnClickLi
 
         addoncard=findViewById(R.id.addoncard);
         back_activity_button=findViewById(R.id.back_activity_button);
+
+
+        addoncard.setText("Add-on Card");
+
 
         addoncard.setOnClickListener(this);
         back_activity_button.setOnClickListener(this);
