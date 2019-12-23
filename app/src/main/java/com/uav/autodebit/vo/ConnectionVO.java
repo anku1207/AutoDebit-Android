@@ -18,6 +18,8 @@ public class ConnectionVO implements Serializable {
     private String entityTextKey;
     private String entityIdKey;
 
+    private Boolean isLoaderAvoided;
+
     public ConnectionVO(){
 
     }
@@ -87,5 +89,11 @@ public class ConnectionVO implements Serializable {
         this.entityIdKey = entityIdKey;
     }
 
+    public Boolean getLoaderAvoided() {
+        return isLoaderAvoided;
+    }
 
+    public void setLoaderAvoided(Boolean loaderAvoided) {
+        isLoaderAvoided = loaderAvoided;
+    }
 }

@@ -73,9 +73,8 @@ public class VolleyUtils {
         pDialog.setMessage("Connecting ...");
         pDialog.setCancelable(false);
         pDialog.setCanceledOnTouchOutside(false);
-        pDialog.show();
 
-
+        if(connectionVO.getLoaderAvoided()==null || !connectionVO.getLoaderAvoided())   pDialog.show();
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (connectionVO.getRequestType(), ApplicationConstant.getHttpURL(context) + connectionVO.getMethodName() , jsonParams, new Response.Listener<JSONObject>() {
