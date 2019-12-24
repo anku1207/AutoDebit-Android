@@ -1067,6 +1067,39 @@ public class Utility {
 
 
 
+    public static void changeTextColor(final TextView textView, int startColor, int endColor,
+                                       final long animDuration, final long animUnit){
+        if (textView == null) return;
+
+        final int startRed = Color.red(startColor);
+        final int startBlue = Color.blue(startColor);
+        final int startGreen = Color.green(startColor);
+
+        final int endRed = Color.red(endColor);
+        final int endBlue = Color.blue(endColor);
+        final int endGreen = Color.green(endColor);
+
+        new CountDownTimer(animDuration, animUnit){
+            //animDuration is the time in ms over which to run the animation
+            //animUnit is the time unit in ms, update color after each animUnit
+
+            @Override
+            public void onTick(long l) {
+                int red = (int) (endRed + (l * (startRed - endRed) / animDuration));
+                int blue = (int) (endBlue + (l * (startBlue - endBlue) / animDuration));
+                int green = (int) (endGreen + (l * (startGreen - endGreen) / animDuration));
+
+                Log.d("Changing color", "Changing color to RGB" + red + ", " + green + ", " + blue);
+                textView.setTextColor(Color.rgb(red, green, blue));
+            }
+
+            @Override
+            public void onFinish() {
+                textView.setTextColor(Color.rgb(endRed, endGreen, endBlue));
+            }
+        }.start();
+    }
+
 
 
 }

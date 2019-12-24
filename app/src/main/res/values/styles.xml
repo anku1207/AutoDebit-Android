@@ -189,7 +189,7 @@
     <style name="confirmation_dialog_text_flied">
         <item name="android:textAlignment">center</item>
         <item name="android:fontFamily">@font/poppinssemibold</item>
-        <item name="android:textSize">18dp</item>
+        <item name="android:textSize">15dp</item>
 
     </style>
 

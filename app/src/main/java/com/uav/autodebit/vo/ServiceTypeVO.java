@@ -23,6 +23,7 @@ public class ServiceTypeVO  extends BaseVO implements Serializable {
 
     private String operatorRegionList;
     private String message;
+    private Integer mandateRequired;
 
     public ServiceTypeVO(){
 
@@ -155,5 +156,13 @@ public class ServiceTypeVO  extends BaseVO implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Integer getMandateRequired() {
+        return mandateRequired;
+    }
+
+    public void setMandateRequired(Integer mandateRequired) {
+        this.mandateRequired = mandateRequired;
     }
 }
