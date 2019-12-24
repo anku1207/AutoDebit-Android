@@ -137,6 +137,8 @@
                 android:textColor="@drawable/text_change_color_blue"
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="5dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 />
             <TextView
                 android:layout_width="match_parent"

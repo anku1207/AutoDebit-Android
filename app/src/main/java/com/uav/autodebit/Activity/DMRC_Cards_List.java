@@ -155,7 +155,7 @@ public class DMRC_Cards_List extends AppCompatActivity implements View.OnClickLi
                     finish();
                     break;
                 }else{
-                    Toast.makeText(this, "sdfsfsdfd", Toast.LENGTH_SHORT).show();
+                    Utility.showSingleButtonDialog(DMRC_Cards_List.this,"Alert",dmrc_customer_cardVO.getActionname(),false);
                     break;
                 }
             case R.id.back_activity_button:

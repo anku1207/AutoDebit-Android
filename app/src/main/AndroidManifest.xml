@@ -34,9 +34,9 @@
         android:fullBackupContent="@xml/backup_descriptor"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/autopehomelogo"
-        android:roundIcon="@mipmap/autopehomelogo"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:roundIcon="@mipmap/autopehomelogo"
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -213,7 +213,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Activity.Help"></activity>
+        <activity android:name=".Activity.Help" />
+        <activity android:name=".Activity.D2H"></activity>
     </application>
 
 </manifest>

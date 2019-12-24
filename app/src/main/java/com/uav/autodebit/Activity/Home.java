@@ -136,6 +136,7 @@ public class Home extends AppCompatActivity
             activity_json.put("11","Gas_Bill");
             activity_json.put("10","Electricity_Bill");
             activity_json.put("15","All_Service");
+            activity_json.put("17","D2H");
 
             json_Service.put("L_2","PanVerification");
             json_Service.put("L_3","Credit_Score_Report");
@@ -568,6 +569,7 @@ public class Home extends AppCompatActivity
                         try {
                             startActivityServiceClick(Integer.parseInt(serviceId),Class.forName(getPackageName()+".Activity."+activity_json.get(serviceId)),s,selectServiceType.getMandateAmount(),view);
                         } catch (Exception e) {
+                            if(view!=null)Utility.enableDisableView(view,true);
                             e.printStackTrace();
                             Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 
@@ -578,6 +580,7 @@ public class Home extends AppCompatActivity
             });
             backgroundAsyncService.execute();
         }catch (Exception e){
+            if(view!=null)Utility.enableDisableView(view,true);
             Log.e("error_home",e.getMessage());
             Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 
@@ -744,6 +747,7 @@ public class Home extends AppCompatActivity
                     }
             }
         }catch (Exception e){
+            if(view!=null)Utility.enableDisableView(view,true);
             Log.e("error_serviceClick",e.getMessage());
             Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 
