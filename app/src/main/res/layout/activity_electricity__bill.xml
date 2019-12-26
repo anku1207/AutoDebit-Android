@@ -70,7 +70,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
 
 
@@ -80,7 +81,7 @@
             android:orientation="vertical"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="50dp"
+            android:paddingTop="50dp"
             android:id="@+id/main">
 
 
@@ -112,7 +113,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/mobile"
+                    android:drawableLeft="@drawable/operator"
                     android:backgroundTint="@color/white"
                     android:hint="Operator"
                     android:singleLine="true"
@@ -197,7 +198,7 @@
                 android:layout_marginTop="30dp"
                 android:background="@drawable/cornerbutton"
                 android:textColor="@color/white"
-                android:layout_margin="10dp"
+
                 />
 
         </LinearLayout>

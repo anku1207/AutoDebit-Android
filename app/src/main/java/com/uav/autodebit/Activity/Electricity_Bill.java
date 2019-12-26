@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.uav.autodebit.R;
 import com.uav.autodebit.permission.Session;
 import com.uav.autodebit.util.Utility;
@@ -46,6 +47,8 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
     LinearLayout dynamicCardViewContainer;
 
     List<OxigenQuestionsVO> questionsVOS= new ArrayList<OxigenQuestionsVO>();
+
+    boolean valid=true;
 
 
     @Override
@@ -117,9 +120,6 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
         super.onActivityResult(requestCode, resultCode, data);
 
         try{
-
-
-
             if(resultCode==RESULT_OK){
                 switch (requestCode) {
                     case 100:
@@ -153,8 +153,6 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
                                // EditText et = new EditText(new ContextThemeWrapper(this,R.style.edittext));
 
                                 EditText et = Utility.getEditText(Electricity_Bill.this);
-
-
                                 et.setId(View.generateViewId());
                                 et.setHint(oxigenQuestionsVO.getQuestionLabel());
                                 cardView.addView(et);
@@ -177,13 +175,11 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
                 }
             }
         }catch (Exception e){
+            e.printStackTrace();
+            Utility.exceptionAlertDialog(Electricity_Bill.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 
         }
     }
-
-
-
-
 
     @Override
     public void onClick(View view) {
@@ -192,45 +188,72 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
                 finish();
                 break;
             case R.id.proceed:
-                boolean valid=true;
 
-                if(amount.getText().toString().equals("")){
-                    amount.setError("this filed is required");
-                    valid=false;
+                try {
+                        valid=true;
+
+                        JSONObject dataarray=getQuestionLabelDate();
+                        if(!valid)return;
+
+                        JSONObject jsonObject =new JSONObject();
+                        jsonObject.put("operatorcode",operatorcode);
+                        jsonObject.put("amount",amount.getText().toString());
+                        jsonObject.put("questionLabelDate",dataarray.toString());
+
+                        proceed_Recharge(jsonObject);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Utility.exceptionAlertDialog(Electricity_Bill.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
                 }
 
-                for(OxigenQuestionsVO oxigenQuestionsVO:questionsVOS){
-
-                    EditText editText =(EditText) findViewById(oxigenQuestionsVO.getElementId());
-                    editText.setError(null);
-
-                    if(editText.getText().toString().equals("")){
-                        editText.setError(  Utility.getErrorSpannableStringDynamicEditText(this, "this field is required"));
-
-                        valid=false;
-                    }else if(oxigenQuestionsVO.getMinLength()!=null && (editText.getText().toString().length() < Integer.parseInt(oxigenQuestionsVO.getMinLength()))){
-                        editText.setError(oxigenQuestionsVO.getMinLength());
-                        valid=false;
-                    }else if(oxigenQuestionsVO.getMaxLength()!=null && (editText.getText().toString().length() > Integer.parseInt(oxigenQuestionsVO.getMaxLength()))){
-                        editText.setError(oxigenQuestionsVO.getMaxLength());
-                        valid=false;
-                    }
-
-                    //oxigenQuestionsVO.getJsonKey();
-                    //editText.getText().toString();
-                    Toast.makeText(this, ""+editText.getText().toString(), Toast.LENGTH_SHORT).show();
-                }
 
                 break;
             case R.id.fetchbill:
                 if( validatefiled("fetchbill")){
                     amount.setError(null);
                     operator.setError(null);
-
-                    Toast.makeText(this, "sdfsd", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
+    }
+
+    private JSONObject getQuestionLabelDate() throws Exception{
+        if(amount.getText().toString().equals("")){
+            amount.setError("this filed is required");
+            valid=false;
+        }
+        if(operator.getText().toString().equals("")){
+            operator.setError("this filed is required");
+            valid=false;
+        }
+
+
+
+        JSONObject jsonObject =new JSONObject();
+        for(OxigenQuestionsVO oxigenQuestionsVO:questionsVOS){
+
+            EditText editText =(EditText) findViewById(oxigenQuestionsVO.getElementId());
+            editText.setError(null);
+            if(editText.getText().toString().equals("")){
+
+                editText.setError(  Utility.getErrorSpannableStringDynamicEditText(this, "this field is required"));
+                valid=false;
+            }else if(oxigenQuestionsVO.getMinLength()!=null && (editText.getText().toString().length() < Integer.parseInt(oxigenQuestionsVO.getMinLength()))){
+                editText.setError(oxigenQuestionsVO.getMinLength());
+                valid=false;
+            }else if(oxigenQuestionsVO.getMaxLength()!=null && (editText.getText().toString().length() > Integer.parseInt(oxigenQuestionsVO.getMaxLength()))){
+                editText.setError(oxigenQuestionsVO.getMaxLength());
+                valid=false;
+            }
+
+            jsonObject.put(oxigenQuestionsVO.getQuestionLabel(),editText.getText().toString());
+            //oxigenQuestionsVO.getJsonKey();
+            //editText.getText().toString();
+
+        }
+        return jsonObject;
     }
 
     public boolean validatefiled(String type){
@@ -245,5 +268,10 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
             valid=false;
         }
         return valid;
+    }
+
+
+    private  void proceed_Recharge(JSONObject jsonObject){
+
     }
 }

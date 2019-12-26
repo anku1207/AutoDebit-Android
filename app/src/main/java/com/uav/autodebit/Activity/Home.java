@@ -268,6 +268,8 @@ public class Home extends AppCompatActivity
 
         viewPager.setAdapter(new BannerAdapter(this, banners));
         bannerIndicator.setupWithViewPager(viewPager, true);
+        Utility.disable_Tab(bannerIndicator);
+
 
 
         //view pager change position change text view msg

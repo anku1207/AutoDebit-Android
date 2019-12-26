@@ -51,13 +51,16 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Activity.Electricity_Bill"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
         <activity
             android:name=".Activity.Gas_Bill"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".Activity.Mobile_Postpaid"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".Activity.MTNL_Landline_Delhi"
             android:windowSoftInputMode="stateHidden" />
@@ -72,10 +75,12 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".Activity.Water"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            />
         <activity
             android:name=".Activity.Broadband"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            />
         <activity
             android:name=".Activity.LandlineBill"
             android:windowSoftInputMode="stateHidden" />
@@ -140,11 +145,14 @@
             android:name=".Activity.Home"
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden|adjustNothing"
+            />
         <activity
             android:name=".Activity.Webview"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden"
+            />
         <activity
             android:name=".Activity.Enach_Mandate"
             android:screenOrientation="portrait" />

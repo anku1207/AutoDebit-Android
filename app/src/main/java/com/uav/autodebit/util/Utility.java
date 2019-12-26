@@ -31,6 +31,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -683,7 +684,7 @@ public class Utility {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ed.setBackgroundTintList(context.getResources().getColorStateList(R.color.white));
         }
-        ed.setCompoundDrawablesWithIntrinsicBounds(context.getResources().getDrawable(R.drawable.mobile),null,null,null);
+        ed.setCompoundDrawablesWithIntrinsicBounds(context.getResources().getDrawable(R.drawable.pencil),null,null,null);
 
         return ed;
     }
@@ -1137,6 +1138,15 @@ public class Utility {
             }
         }.start();
     }
+
+    public static void disable_Tab(TabLayout tabLayout){
+        LinearLayout tabStrip = ((LinearLayout)tabLayout.getChildAt(0));
+        tabStrip.setEnabled(false);
+        for(int i = 0; i < tabStrip.getChildCount(); i++) {
+            tabStrip.getChildAt(i).setClickable(false);
+        }
+    }
+
 
 
 
