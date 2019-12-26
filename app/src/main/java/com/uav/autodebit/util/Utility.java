@@ -37,9 +37,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
@@ -648,11 +650,47 @@ public class Utility {
 
 
     public static TextView getTextView(Context context, String txt){
+        Typeface typeface = ResourcesCompat.getFont(context, R.font.poppinssemibold);
         TextView tv = new TextView(context);
         tv.setText(txt);
+        tv.setTypeface(typeface);
         tv.setLayoutParams(getLayoutparams(context,20,0,0,0));
         return tv;
     }
+
+    public static EditText getEditText(Context context){
+        Typeface typeface = ResourcesCompat.getFont(context, R.font.poppinsmedium);
+        EditText ed = new EditText(context);
+        LinearLayout.LayoutParams layoutparams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+
+        int marginInDp = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 10, context.getResources()
+                        .getDisplayMetrics());
+
+        layoutparams.setMargins(marginInDp,0,0,0);
+
+        ed.setLayoutParams(layoutparams);
+        ed.setSingleLine(true);
+        ed.setTypeface(typeface, Typeface.BOLD);
+        ed.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        ed.setKeyListener(DigitsKeyListener.getInstance(context.getString(R.string.NumberDigits)));
+        ed.setCompoundDrawablePadding(4);
+        ed.setMaxLines(1);
+        ed.setTextSize(12);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ed.setBackgroundTintList(context.getResources().getColorStateList(R.color.white));
+        }
+        ed.setCompoundDrawablesWithIntrinsicBounds(context.getResources().getDrawable(R.drawable.mobile),null,null,null);
+
+        return ed;
+    }
+
+
+
+
 
     private static LinearLayout.LayoutParams getLayoutparams(Context context ,int left, int top, int right, int bottom ){
         LinearLayout.LayoutParams layoutparams = new LinearLayout.LayoutParams(

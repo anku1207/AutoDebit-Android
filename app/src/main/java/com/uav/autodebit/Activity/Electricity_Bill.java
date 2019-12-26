@@ -1,7 +1,11 @@
 package com.uav.autodebit.Activity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -133,9 +137,7 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
                         amount.setError(null);
                         //Remove dynamic cards from the layout and arraylist
 
-                        if(dynamicCardViewContainer.getChildCount()>0)
-                            dynamicCardViewContainer.removeAllViews();
-
+                        if(dynamicCardViewContainer.getChildCount()>0) dynamicCardViewContainer.removeAllViews();
                         questionsVOS.clear();
 
 
@@ -148,16 +150,20 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
                                 OxigenQuestionsVO oxigenQuestionsVO = gson.fromJson(jsonObject.toString(), OxigenQuestionsVO.class);
 
                                 CardView cardView = Utility.getCardViewStyle(this);
-                                EditText et = new EditText(new ContextThemeWrapper(this,R.style.edittext));
+                               // EditText et = new EditText(new ContextThemeWrapper(this,R.style.edittext));
+
+                                EditText et = Utility.getEditText(Electricity_Bill.this);
+
+
                                 et.setId(View.generateViewId());
                                 et.setHint(oxigenQuestionsVO.getQuestionLabel());
                                 cardView.addView(et);
                                 dynamicCardViewContainer.addView(cardView);
                                 if(oxigenQuestionsVO.getInstructions()!=null){
                                     TextView tv = Utility.getTextView(this, oxigenQuestionsVO.getInstructions());
+
                                     dynamicCardViewContainer.addView(tv);
                                 }
-
 
                                 oxigenQuestionsVO.setElementId(et.getId());
                                 questionsVOS.add(oxigenQuestionsVO);
@@ -186,31 +192,33 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
                 finish();
                 break;
             case R.id.proceed:
-                if( validatefiled("proceed")){
+                boolean valid=true;
 
-                    for(OxigenQuestionsVO oxigenQuestionsVO:questionsVOS){
+                if(amount.getText().toString().equals("")){
+                    amount.setError("this filed is required");
+                    valid=false;
+                }
 
-                        EditText editText =(EditText) findViewById(oxigenQuestionsVO.getElementId());
-                        editText.setError(null);
+                for(OxigenQuestionsVO oxigenQuestionsVO:questionsVOS){
 
-                        if(editText.getText().toString().equals("")){
-                            editText.setError(  Utility.getErrorSpannableStringDynamicEditText(this, "this field is required"));
+                    EditText editText =(EditText) findViewById(oxigenQuestionsVO.getElementId());
+                    editText.setError(null);
 
-                        }else if(oxigenQuestionsVO.getMinLength()!=null && (editText.getText().toString().length() < Integer.parseInt(oxigenQuestionsVO.getMinLength()))){
-                            editText.setError(oxigenQuestionsVO.getMinLength());
-                        }else if(oxigenQuestionsVO.getMaxLength()!=null && (editText.getText().toString().length() > Integer.parseInt(oxigenQuestionsVO.getMaxLength()))){
-                            editText.setError(oxigenQuestionsVO.getMaxLength());
-                        }
+                    if(editText.getText().toString().equals("")){
+                        editText.setError(  Utility.getErrorSpannableStringDynamicEditText(this, "this field is required"));
 
-
-
-
-
-
-                        oxigenQuestionsVO.getJsonKey();
-                        editText.getText().toString();
-                        Toast.makeText(this, ""+editText.getText().toString(), Toast.LENGTH_SHORT).show();
+                        valid=false;
+                    }else if(oxigenQuestionsVO.getMinLength()!=null && (editText.getText().toString().length() < Integer.parseInt(oxigenQuestionsVO.getMinLength()))){
+                        editText.setError(oxigenQuestionsVO.getMinLength());
+                        valid=false;
+                    }else if(oxigenQuestionsVO.getMaxLength()!=null && (editText.getText().toString().length() > Integer.parseInt(oxigenQuestionsVO.getMaxLength()))){
+                        editText.setError(oxigenQuestionsVO.getMaxLength());
+                        valid=false;
                     }
+
+                    //oxigenQuestionsVO.getJsonKey();
+                    //editText.getText().toString();
+                    Toast.makeText(this, ""+editText.getText().toString(), Toast.LENGTH_SHORT).show();
                 }
 
                 break;
@@ -236,15 +244,6 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
             operator.setError("this filed is required");
             valid=false;
         }
-
-
-        if(type.equals("proceed")){
-            if(amount.getText().toString().equals("")){
-                amount.setError("this filed is required");
-                valid=false;
-            }
-        }
-
         return valid;
     }
 }

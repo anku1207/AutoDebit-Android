@@ -30,6 +30,7 @@ import com.uav.autodebit.BO.SignUpBO;
 import com.uav.autodebit.Interface.ConfirmationDialogInterface;
 import com.uav.autodebit.R;
 import com.uav.autodebit.constant.ApplicationConstant;
+import com.uav.autodebit.constant.ErrorMsg;
 import com.uav.autodebit.permission.Session;
 import com.uav.autodebit.util.DialogInterface;
 import com.uav.autodebit.util.Utility;
@@ -83,15 +84,15 @@ public class User_Registration extends AppCompatActivity {
 
                 boolean inputvalid=true;
                 if(username.getText().toString().equals("")){
-                    username.setError("this filed is required");
+                    username.setError(ErrorMsg.user_Registration_Filed_Required);
                     inputvalid=false;
                 }
                 if(userphone.getText().toString().equals("")){
-                    userphone.setError("this filed is required");
+                    userphone.setError(ErrorMsg.user_Registration_Filed_Required);
                     inputvalid=false;
                 }
                 if(useremail.getText().toString().equals("")){
-                    useremail.setError("this filed is required");
+                    useremail.setError(ErrorMsg.user_Registration_Filed_Required);
                     inputvalid=false;
                 }
 

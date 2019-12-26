@@ -33,6 +33,7 @@ import com.google.gson.Gson;
 import com.uav.autodebit.BO.SignUpBO;
 import com.uav.autodebit.R;
 import com.uav.autodebit.constant.ApplicationConstant;
+import com.uav.autodebit.constant.ErrorMsg;
 import com.uav.autodebit.fingerprint.FingerprintHandler;
 import com.uav.autodebit.fingerprint.Fingerprint_Authentication;
 import com.uav.autodebit.fingerprint.IFingerPrint;
@@ -188,7 +189,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                 }
                 if(!checkvalid){
 
-                    Utility.showSingleButtonDialog(Login.this,"Alert","Enter Valid User id",false);
+                    Utility.showSingleButtonDialog(Login.this,"Alert",ErrorMsg.login_Valid_User_Id,false);
                     return;
                 }
                 loginByFigerprint(userid.getText().toString(),type);
@@ -241,7 +242,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                 break;
             case R.id.forgorpassword:
                 if(userid.getText().toString().equals("")){
-                    Utility.showSingleButtonDialog(Login.this,"Alert","User Id is Empty",false);
+                    Utility.showSingleButtonDialog(Login.this,"Alert", ErrorMsg.login_User_empty,false);
                     return;
                 }else {
                     String type=null;
@@ -257,7 +258,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                         }
                     }
                     if(!checkvalid){
-                        Utility.showSingleButtonDialog(Login.this,"Alert","Enter Valid User id",false);
+                        Utility.showSingleButtonDialog(Login.this,"Alert",ErrorMsg.login_Valid_User_Id,false);
                         return;
                     }
                     forgotPasswordOTP(type,userid.getText().toString().trim());
@@ -267,11 +268,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                 if(userid.getText().toString().equals("") || password.getText().toString().equals("")){
 
                     if(userid.getText().toString().equals("")){
-                        Utility.showSingleButtonDialog(Login.this,"Alert","User Id is Empty",false);
+                        Utility.showSingleButtonDialog(Login.this,"Alert",ErrorMsg.login_User_empty,false);
                         return;
                     }
                     if(password.getText().toString().equals("")){
-                        Utility.showSingleButtonDialog(Login.this,"Alert","Password is Empty",false);
+                        Utility.showSingleButtonDialog(Login.this,"Alert",ErrorMsg.login_Password_empty,false);
                         return;
                     }
 
@@ -290,7 +291,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
                         }
                     }
                     if(!checkvalid){
-                        Utility.showSingleButtonDialog(Login.this,"Alert","Enter Valid User id",false);
+                        Utility.showSingleButtonDialog(Login.this,"Alert",ErrorMsg.login_Valid_User_Id,false);
                         return;
                     }
                     loginviapassword(userid.getText().toString().trim(),password.getText().toString().trim(),type);
@@ -298,7 +299,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
             break;
             case  R.id.  loginviaotpbtn:
                 if(userid.getText().toString().equals("")){
-                    Utility.showSingleButtonDialog(Login.this,"Alert","User Id is Empty",false);
+                    Utility.showSingleButtonDialog(Login.this,"Alert",ErrorMsg.login_User_empty,false);
                     return;
                 }else {
                     String type=null;
@@ -315,7 +316,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
 
                     }
                     if(!checkvalid){
-                        Utility.showSingleButtonDialog(Login.this,"Alert","Enter Valid User id",false);
+                        Utility.showSingleButtonDialog(Login.this,"Alert",ErrorMsg.login_Valid_User_Id,false);
                         return;
                     }
                     resendotpfun(type,userid.getText().toString().trim());

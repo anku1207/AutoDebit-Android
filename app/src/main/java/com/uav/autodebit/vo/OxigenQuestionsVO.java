@@ -7,7 +7,6 @@ public class OxigenQuestionsVO extends BannerVO  implements Serializable {
 
 
     private String questionLabel;
-
     private String minLength;
     private String maxLength;
     private String validationRegex;
