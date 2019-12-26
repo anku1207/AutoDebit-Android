@@ -1,11 +1,13 @@
 package com.uav.autodebit.Activity;
 
+import android.annotation.TargetApi;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -52,11 +54,21 @@ public class User_Registration extends AppCompatActivity {
     EditText username,userphone,useremail;
     Intent intent=null;
 
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void disableAutofill() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            getWindow().getDecorView().setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS);
+        }
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user__registration);
         getSupportActionBar().hide();
+
+        disableAutofill();
 
         username=findViewById(R.id.username);
         userphone=findViewById(R.id.userphone);

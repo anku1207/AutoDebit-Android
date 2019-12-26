@@ -71,6 +71,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
     Fingerprint_Authentication fingerprint_authentication ;
     LinearLayout fingerprintlayout;
 
+
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void disableAutofill() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            getWindow().getDecorView().setImportantForAutofill(View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS);
+        }
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +87,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener, Vi
 
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
+        disableAutofill();
 
         PermissionHandler.checkpermission(Login.this);
 
