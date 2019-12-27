@@ -22,17 +22,25 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.uav.autodebit.BO.Electricity_BillBO;
+import com.uav.autodebit.BO.MetroBO;
 import com.uav.autodebit.R;
 import com.uav.autodebit.permission.Session;
 import com.uav.autodebit.util.Utility;
+import com.uav.autodebit.vo.ConnectionVO;
+import com.uav.autodebit.vo.CustomerVO;
+import com.uav.autodebit.vo.DMRC_Customer_CardVO;
 import com.uav.autodebit.vo.DataAdapterVO;
 import com.uav.autodebit.vo.OxigenQuestionsVO;
+import com.uav.autodebit.volley.VolleyResponseListener;
+import com.uav.autodebit.volley.VolleyUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Electricity_Bill extends AppCompatActivity  implements View.OnClickListener {
@@ -159,25 +167,18 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
                                 dynamicCardViewContainer.addView(cardView);
                                 if(oxigenQuestionsVO.getInstructions()!=null){
                                     TextView tv = Utility.getTextView(this, oxigenQuestionsVO.getInstructions());
-
                                     dynamicCardViewContainer.addView(tv);
                                 }
-
                                 oxigenQuestionsVO.setElementId(et.getId());
                                 questionsVOS.add(oxigenQuestionsVO);
                             }
                         }
-
                         break;
-
-
-
                 }
             }
         }catch (Exception e){
             e.printStackTrace();
             Utility.exceptionAlertDialog(Electricity_Bill.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
-
         }
     }
 
@@ -192,7 +193,7 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
                 try {
                         valid=true;
 
-                        JSONObject dataarray=getQuestionLabelDate();
+                        JSONObject dataarray=getQuestionLabelDate(true);
                         if(!valid)return;
 
                         JSONObject jsonObject =new JSONObject();
@@ -200,7 +201,7 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
                         jsonObject.put("amount",amount.getText().toString());
                         jsonObject.put("questionLabelDate",dataarray.toString());
 
-                        proceed_Recharge(jsonObject);
+                        proceedRecharge(jsonObject);
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -211,19 +212,32 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
 
                 break;
             case R.id.fetchbill:
-                if( validatefiled("fetchbill")){
-                    amount.setError(null);
-                    operator.setError(null);
+                try {
+                    JSONObject dataarray=getQuestionLabelDate(false);
+                    if(!valid)return;
+                    JSONObject jsonObject =new JSONObject();
+                    jsonObject.put("operatorcode",operatorcode);
+                    jsonObject.put("questionLabelData",dataarray);
+
+                    proceedFetchBill(jsonObject);
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                    Utility.exceptionAlertDialog(Electricity_Bill.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
                 }
+                valid=true;
                 break;
         }
     }
 
-    private JSONObject getQuestionLabelDate() throws Exception{
-        if(amount.getText().toString().equals("")){
-            amount.setError("this filed is required");
-            valid=false;
+    private JSONObject getQuestionLabelDate(boolean fetchBill) throws Exception{
+        if(fetchBill){
+            if(amount.getText().toString().equals("")){
+                amount.setError("this filed is required");
+                valid=false;
+            }
         }
+
         if(operator.getText().toString().equals("")){
             operator.setError("this filed is required");
             valid=false;
@@ -256,22 +270,56 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
         return jsonObject;
     }
 
-    public boolean validatefiled(String type){
 
-        boolean valid=true;
-        operator.setError(null);
-        amount.setError(null);
-        fetchbill.setVisibility(View.VISIBLE);
+    private  void proceedRecharge(JSONObject jsonObject){
 
-        if(operator.getText().toString().equals("")){
-            operator.setError("this filed is required");
-            valid=false;
-        }
-        return valid;
     }
 
 
-    private  void proceed_Recharge(JSONObject jsonObject){
 
+    private void proceedFetchBill(JSONObject jsonObject) throws Exception{
+        Log.w("proceedFetchBill",jsonObject.toString());
+
+        try {
+            Gson gson =new Gson();
+
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            ConnectionVO connectionVO = Electricity_BillBO.oxiFetchBill();
+
+            CustomerVO customerVO =new CustomerVO();
+            customerVO.setCustomerId(Integer.parseInt(Session.getCustomerId(Electricity_Bill.this)));
+            jsonObject.put("customer",customerVO);
+            params.put("volley", gson.toJson(jsonObject));
+            connectionVO.setParams(params);
+
+            VolleyUtils.makeJsonObjectRequest(Electricity_Bill.this,connectionVO, new VolleyResponseListener() {
+                @Override
+                public void onError(String message) {
+                }
+                @Override
+                public void onResponse(Object resp) throws JSONException {
+                    JSONObject response = (JSONObject) resp;
+                    Gson gson = new Gson();
+                    DMRC_Customer_CardVO dmrc_customer_cardVO = gson.fromJson(response.toString(), DMRC_Customer_CardVO.class);
+
+                    if(dmrc_customer_cardVO.getStatusCode().equals("400")){
+                        ArrayList error = (ArrayList) dmrc_customer_cardVO.getErrorMsgs();
+                        StringBuilder sb = new StringBuilder();
+                        for(int i=0; i<error.size(); i++){
+                            sb.append(error.get(i)).append("\n");
+                        }
+
+                        Utility.showSingleButtonDialog(Electricity_Bill.this,"Error !",sb.toString(),false);
+                    }else {
+
+
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            Utility.exceptionAlertDialog(Electricity_Bill.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
+
+        }
     }
 }

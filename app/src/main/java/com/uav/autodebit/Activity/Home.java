@@ -112,8 +112,6 @@ public class Home extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-
-
         dialog=new ProgressDialog(Home.this);
         pd = new UAVProgressDialog(this);
 
@@ -146,23 +144,23 @@ public class Home extends AppCompatActivity
 
 
 
-        //check customer level and start activity
-            Gson gson =new Gson();
-            CustomerVO customerVO = gson.fromJson(Session.getSessionByKey(Home.this,Session.CACHE_CUSTOMER), CustomerVO.class);
-            if(customerVO.getLevel().getLevelId()<=2){
-                if(customerVO.getLevel().getLevelId()==1){
-                    startActivity(new Intent(Home.this,PanVerification.class));
-                    finish();
-                    return;
-                }else if(customerVO.getLevel().getLevelId()==2){
-                    startActivity(new Intent(Home.this,Credit_Score_Report.class));
-                    finish();
-                    return;
-                }
+       //check customer level and start activity
+        Gson gson =new Gson();
+        CustomerVO customerVO = gson.fromJson(Session.getSessionByKey(Home.this,Session.CACHE_CUSTOMER), CustomerVO.class);
+        if(customerVO.getLevel().getLevelId()<=2){
+            if(customerVO.getLevel().getLevelId()==1){
+                startActivity(new Intent(Home.this,PanVerification.class));
+                finish();
+                return;
+            }else if(customerVO.getLevel().getLevelId()==2){
+                startActivity(new Intent(Home.this,Credit_Score_Report.class));
+                finish();
+                return;
             }
+        }
 
-            // override local cache
-            overrideLocalCache(customerVO);
+        // override local cache
+             overrideLocalCache(customerVO);
         }catch (Exception e){
             Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
         }

@@ -676,7 +676,7 @@ public class Utility {
         ed.setLayoutParams(layoutparams);
         ed.setSingleLine(true);
         ed.setTypeface(typeface, Typeface.BOLD);
-        ed.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        ed.setInputType(InputType.TYPE_CLASS_NUMBER);
         ed.setKeyListener(DigitsKeyListener.getInstance(context.getString(R.string.NumberDigits)));
         ed.setCompoundDrawablePadding(4);
         ed.setMaxLines(1);
