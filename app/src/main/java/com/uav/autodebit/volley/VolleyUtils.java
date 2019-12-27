@@ -95,7 +95,6 @@ public class VolleyUtils {
                                             UpdateApp atualizaApp = new UpdateApp();
                                             atualizaApp.setContext(mctx);
                                             atualizaApp.execute("");
-
                                         }
 
                                     }

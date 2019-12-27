@@ -138,7 +138,7 @@
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/mobile"
+                    android:drawableLeft="@drawable/operator"
                     android:backgroundTint="@color/white"
                     android:hint="Operator"
                     android:singleLine="true"
