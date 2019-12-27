@@ -348,7 +348,7 @@ public class Mobile_Postpaid extends AppCompatActivity implements View.OnClickLi
 
             CustomerVO customerVO =new CustomerVO();
             customerVO.setCustomerId(Integer.valueOf(Session.getCustomerId(Mobile_Postpaid.this)));
-            oxigenTransactionVO.setCustoemr(customerVO);
+            oxigenTransactionVO.setCustomer(customerVO);
 
             ServiceTypeVO serviceTypeVO =new ServiceTypeVO();
             serviceTypeVO.setServiceTypeId(Integer.parseInt(serviceid));

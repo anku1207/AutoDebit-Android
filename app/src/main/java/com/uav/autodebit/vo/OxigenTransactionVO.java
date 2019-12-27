@@ -6,7 +6,7 @@ public class OxigenTransactionVO extends BannerVO  implements Serializable {
 
 
     private Integer typeId;
-    private CustomerVO custoemr;
+    private CustomerVO customer;
     private ServiceTypeVO serviceType;
 
     private String referenceName;
@@ -29,12 +29,12 @@ public class OxigenTransactionVO extends BannerVO  implements Serializable {
         this.typeId = typeId;
     }
 
-    public CustomerVO getCustoemr() {
-        return custoemr;
+    public CustomerVO getCustomer() {
+        return customer;
     }
 
-    public void setCustoemr(CustomerVO custoemr) {
-        this.custoemr = custoemr;
+    public void setCustomer(CustomerVO customer) {
+        this.customer = customer;
     }
 
     public ServiceTypeVO getServiceType() {

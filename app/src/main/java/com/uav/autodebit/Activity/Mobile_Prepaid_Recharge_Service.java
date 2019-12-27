@@ -344,7 +344,7 @@ public class Mobile_Prepaid_Recharge_Service extends AppCompatActivity implement
 
             CustomerVO customerVO =new CustomerVO();
             customerVO.setCustomerId(Integer.valueOf(Session.getCustomerId(Mobile_Prepaid_Recharge_Service.this)));
-            oxigenTransactionVO.setCustoemr(customerVO);
+            oxigenTransactionVO.setCustomer(customerVO);
 
             ServiceTypeVO serviceTypeVO =new ServiceTypeVO();
             serviceTypeVO.setServiceTypeId(Integer.parseInt(serviceid));
