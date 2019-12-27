@@ -194,14 +194,40 @@
                 android:id="@+id/proceed"
                 android:text="Proceed"
                 android:layout_gravity="center"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="20dp"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/cornerbutton"
                 android:textColor="@color/white"
 
                 />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="20dp"
+                android:paddingEnd="20dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginBottom="20dp">
+
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/bbpslogo"
+                    android:layout_gravity="center"/>
+
+
+            </LinearLayout>
+
+
         </LinearLayout>
+
+
+
+
 
     </ScrollView>
 

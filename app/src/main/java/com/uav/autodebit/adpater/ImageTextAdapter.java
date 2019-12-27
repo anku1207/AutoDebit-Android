@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
 import com.uav.autodebit.R;
 import com.uav.autodebit.override.UAVTextView;
 import com.uav.autodebit.util.Utility;
@@ -59,8 +60,14 @@ public class ImageTextAdapter extends BaseAdapter {
             UAVTextView textView=(UAVTextView) convertView.findViewById(R.id.listtext);
 
 
-            if(Utility.GetImage(context,dataAdapterVO.getImagename())!=null){
+            if(dataAdapterVO.getImagename()!=null && Utility.GetImage(context,dataAdapterVO.getImagename())!=null){
                 imageView.setImageDrawable(Utility.GetImage(context,dataAdapterVO.getImagename()));
+            }else if(dataAdapterVO.getImageUrl()!=null){
+                Picasso.with(context)
+                        .load(dataAdapterVO.getImageUrl())
+                        .placeholder(R.drawable.loadimage)
+                        .error(R.drawable.loadimage).into(imageView)
+                        ;
             }
             textView.setTxtAssociatedValue( dataAdapterVO.getAssociatedValue());
 

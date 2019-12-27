@@ -10,7 +10,7 @@ public class Electricity_BillBO implements Serializable {
     public static ConnectionVO oxiFetchBill() {
 
         ConnectionVO connectionVO = new ConnectionVO();
-        connectionVO.setMethodName("oxiFetchBill");
+        connectionVO.setMethodName("oxiBillFetch");
         connectionVO.setRequestType(ConnectionVO.REQUEST_POST);
 
         return connectionVO;

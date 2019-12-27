@@ -113,7 +113,7 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
                 JSONObject object =jsonArray.getJSONObject(i);
                 dataAdapterVO.setText(object.getString("name"));
                 dataAdapterVO.setQuestionsData(object.getString("questionsData"));
-                // dataAdapterVO.setImagename(object.getString("serviceName").toLowerCase());
+                dataAdapterVO.setImageUrl(object.has("imageUrl") ?object.getString("imageUrl"):null);
                 dataAdapterVO.setAssociatedValue(object.getString("service"));
                 datalist.add(dataAdapterVO);
             }
@@ -213,11 +213,12 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
                 break;
             case R.id.fetchbill:
                 try {
+                    valid=true;
                     JSONObject dataarray=getQuestionLabelDate(false);
                     if(!valid)return;
                     JSONObject jsonObject =new JSONObject();
                     jsonObject.put("operatorcode",operatorcode);
-                    jsonObject.put("questionLabelData",dataarray);
+                    jsonObject.put("questionLabelData",dataarray.toString());
 
                     proceedFetchBill(jsonObject);
 
@@ -242,8 +243,6 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
             operator.setError("this filed is required");
             valid=false;
         }
-
-
 
         JSONObject jsonObject =new JSONObject();
         for(OxigenQuestionsVO oxigenQuestionsVO:questionsVOS){
@@ -278,7 +277,7 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
 
 
     private void proceedFetchBill(JSONObject jsonObject) throws Exception{
-        Log.w("proceedFetchBill",jsonObject.toString());
+
 
         try {
             Gson gson =new Gson();
@@ -286,10 +285,9 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
             HashMap<String, Object> params = new HashMap<String, Object>();
             ConnectionVO connectionVO = Electricity_BillBO.oxiFetchBill();
 
-            CustomerVO customerVO =new CustomerVO();
-            customerVO.setCustomerId(Integer.parseInt(Session.getCustomerId(Electricity_Bill.this)));
-            jsonObject.put("customer",customerVO);
-            params.put("volley", gson.toJson(jsonObject));
+            params.put("volley",jsonObject.toString());
+
+            Log.w("proceedFetchBill",jsonObject.toString());
             connectionVO.setParams(params);
 
             VolleyUtils.makeJsonObjectRequest(Electricity_Bill.this,connectionVO, new VolleyResponseListener() {

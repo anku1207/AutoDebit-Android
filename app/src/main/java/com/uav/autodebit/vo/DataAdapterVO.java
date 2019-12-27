@@ -14,7 +14,7 @@ public class DataAdapterVO implements Serializable {
     private Class activityname;
 
     private String validity;
-
+    private String imageUrl;
 
 
 
@@ -25,7 +25,7 @@ public class DataAdapterVO implements Serializable {
     private  String productcode;
     private  String productname;
     private  String pcsid;
-    private JSONObject response;
+    private  JSONObject response;
     private  String producttype;
     private  Integer associativeCombo;
 
@@ -212,5 +212,13 @@ public class DataAdapterVO implements Serializable {
 
     public void setQuestionsData(String questionsData) {
         this.questionsData = questionsData;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
