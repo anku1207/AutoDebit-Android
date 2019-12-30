@@ -247,6 +247,9 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
     }
 
     private JSONObject getQuestionLabelDate(boolean fetchBill) throws Exception{
+        amount.setError(null);
+        operator.setError(null);
+
         if(fetchBill){
             if(amount.getText().toString().equals("")){
                 amount.setError("this filed is required");
