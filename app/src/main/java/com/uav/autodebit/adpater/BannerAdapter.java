@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
 import com.uav.autodebit.Activity.Splash_Screen;
 import com.uav.autodebit.R;
 import com.uav.autodebit.androidFragment.Home_Menu;
@@ -62,12 +63,30 @@ public class BannerAdapter extends PagerAdapter {
         View view = inflater.inflate(R.layout.item_slider, null);
 
         ImageView imgView = (ImageView) view.findViewById(R.id.bannerImage);
-        new DiskLruImageCache(context, Utils_Cache.CACHE_FILEPATH_BANNER,Utils_Cache.CACHE_FILE_SIZE, Bitmap.CompressFormat.PNG,100);
-        imgView.setImageBitmap(DiskLruImageCache.containsKey(Utils_Cache.BANNER_PREFIX+bannerVO.getBannerId()) ? DiskLruImageCache.getBitmap(Utils_Cache.BANNER_PREFIX+bannerVO.getBannerId()) :null);
+        ImageView loadimage = (ImageView) view.findViewById(R.id.loadimage);
+        loadimage.setVisibility(View.VISIBLE);
+        imgView.setVisibility(View.GONE);
 
+        //(cache Image run in banner )
+        //new DiskLruImageCache(context, Utils_Cache.CACHE_FILEPATH_BANNER,Utils_Cache.CACHE_FILE_SIZE, Bitmap.CompressFormat.PNG,100);
+        //imgView.setImageBitmap(DiskLruImageCache.containsKey(Utils_Cache.BANNER_PREFIX+bannerVO.getBannerId()) ? DiskLruImageCache.getBitmap(Utils_Cache.BANNER_PREFIX+bannerVO.getBannerId()) :null);
 
+        Picasso.with(context)
+                .load(bannerVO.getBannerImage())
+                .into(imgView, new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        imgView.setVisibility(View.VISIBLE);
+                        loadimage.setVisibility(View.GONE);
+                        //do smth when picture is loaded successfully
+                    }
+                    @Override
+                    public void onError() {
+                        imgView.setVisibility(View.GONE);
+                        loadimage.setVisibility(View.VISIBLE);
+                    }
+                });
         container.addView(view);
-
         /*ViewPager viewPager = (ViewPager) container;
         viewPager.addView(view, 0);*/
 

@@ -167,7 +167,11 @@ public class Splash_Screen extends AppCompatActivity implements BitmapInterface 
 
                     Session.set_Data_Sharedprefence(Splash_Screen.this, Session.LOCAL_CACHE,response.toString());
 
-                    managecachedata();
+
+
+                    //download image on first time
+
+                    //managecachedata();
 
 
 

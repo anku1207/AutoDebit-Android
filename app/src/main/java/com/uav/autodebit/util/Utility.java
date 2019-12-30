@@ -1147,6 +1147,18 @@ public class Utility {
         }
     }
 
+    public void disable_AllEditTest(LinearLayout linearLayout){
+        for (View view : linearLayout.getTouchables()){
+            if (view instanceof EditText){
+                EditText editText = (EditText) view;
+                editText.setEnabled(false);
+                editText.setFocusable(false);
+                editText.setFocusableInTouchMode(false);
+            }
+        }
+
+    }
+
 
 
 
