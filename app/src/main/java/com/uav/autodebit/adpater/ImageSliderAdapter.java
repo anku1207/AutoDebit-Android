@@ -50,9 +50,25 @@ public class ImageSliderAdapter extends PagerAdapter {
 
         ImageView imgView = (ImageView) view.findViewById(R.id.bannerImage);
 
-        Picasso.with(context).load(img).fit()
-                .into(imgView);
+        ImageView loadimage = (ImageView) view.findViewById(R.id.loadimage);
+        loadimage.setVisibility(View.VISIBLE);
+        imgView.setVisibility(View.GONE);
 
+        Picasso.with(context)
+                .load(img)
+                .into(imgView, new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        imgView.setVisibility(View.VISIBLE);
+                        loadimage.setVisibility(View.GONE);
+                        //do smth when picture is loaded successfully
+                    }
+                    @Override
+                    public void onError() {
+                        imgView.setVisibility(View.GONE);
+                        loadimage.setVisibility(View.VISIBLE);
+                    }
+                });
 
         container.addView(view);
 
