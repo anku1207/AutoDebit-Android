@@ -24,6 +24,9 @@ import com.google.gson.reflect.TypeToken;
 import com.uav.autodebit.R;
 import com.uav.autodebit.adpater.ImageTextAdapter;
 import com.uav.autodebit.override.ExpandableHeightListView;
+import com.uav.autodebit.override.UAVProgressDialog;
+import com.uav.autodebit.util.BackgroundAsyncService;
+import com.uav.autodebit.util.BackgroundServiceInterface;
 import com.uav.autodebit.util.ExceptionHandler;
 import com.uav.autodebit.vo.DataAdapterVO;
 
@@ -41,7 +44,9 @@ public class Listview_With_Image extends AppCompatActivity {
 
     SearchView searchView;
     ImageTextAdapter myAdapter;
-
+    UAVProgressDialog pd;
+    ArrayList<DataAdapterVO> dataAdapterVOS;
+    TextView title;
 
 
 
@@ -53,20 +58,14 @@ public class Listview_With_Image extends AppCompatActivity {
         setContentView(R.layout.activity_listview_with_image);
         getSupportActionBar().hide();
 
-        TextView title = findViewById(R.id.title);
+        title = findViewById(R.id.title);
         searchView = findViewById(R.id.search_view);
 
-
-        Intent intent = getIntent();
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<DataAdapterVO>>() {
-        }.getType();
-        final ArrayList<DataAdapterVO> dataAdapterVOS = gson.fromJson(intent.getStringExtra("datalist"), type);
-
-        title.setText(intent.getStringExtra("title"));
+        pd=new UAVProgressDialog(this);
+        dataAdapterVOS=null;
 
         listView = findViewById(R.id.listview);
-        listView.setExpanded(true);
+        listView.setExpanded(false);
 
 
         back_activity_button = findViewById(R.id.back_activity_button1);
@@ -78,8 +77,8 @@ public class Listview_With_Image extends AppCompatActivity {
             }
         });
 
-        myAdapter = new ImageTextAdapter(this, dataAdapterVOS, R.layout.round_image_with_text);
-        listView.setAdapter(myAdapter);
+       setDateOnListview();
+
         //  listView.setNestedScrollingEnabled(false);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -128,13 +127,29 @@ public class Listview_With_Image extends AppCompatActivity {
         });
     }
 
+    private void setDateOnListview(){
+        BackgroundAsyncService backgroundAsyncService = new BackgroundAsyncService(pd,true, new BackgroundServiceInterface() {
+            @Override
+            public void doInBackGround() {
+
+                Intent intent = getIntent();
+                Gson gson = new Gson();
+
+                Type type = new TypeToken<List<DataAdapterVO>>() {}.getType();
+                dataAdapterVOS = gson.fromJson(intent.getStringExtra("datalist"), type);
+
+                title.setText(intent.getStringExtra("title"));
+                myAdapter = new ImageTextAdapter(Listview_With_Image.this, dataAdapterVOS, R.layout.round_image_with_text);
+                listView.setAdapter(myAdapter);
 
 
+            }
+            @Override
+            public void doPostExecute() {
 
-
-
-
-
-
+            }
+        });
+        backgroundAsyncService.execute();
+    }
 
 }

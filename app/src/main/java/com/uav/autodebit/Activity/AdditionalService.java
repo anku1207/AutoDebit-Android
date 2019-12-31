@@ -96,7 +96,7 @@ public class AdditionalService extends AppCompatActivity implements View.OnClick
 
 
 
-        BackgroundAsyncService backgroundAsyncService = new BackgroundAsyncService(pd,false, new BackgroundServiceInterface() {
+        BackgroundAsyncService backgroundAsyncService = new BackgroundAsyncService(pd,true, new BackgroundServiceInterface() {
             @Override
             public void doInBackGround() {
 

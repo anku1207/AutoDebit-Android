@@ -31,14 +31,20 @@ import com.uav.autodebit.BO.Electricity_BillBO;
 import com.uav.autodebit.BO.MetroBO;
 import com.uav.autodebit.Interface.ConfirmationDialogInterface;
 import com.uav.autodebit.R;
+import com.uav.autodebit.adpater.ListViewItemCheckboxBaseAdapter;
+import com.uav.autodebit.override.UAVProgressDialog;
 import com.uav.autodebit.permission.Session;
+import com.uav.autodebit.util.BackgroundAsyncService;
+import com.uav.autodebit.util.BackgroundServiceInterface;
 import com.uav.autodebit.util.DialogInterface;
 import com.uav.autodebit.util.Utility;
 import com.uav.autodebit.vo.ConnectionVO;
 import com.uav.autodebit.vo.CustomerVO;
 import com.uav.autodebit.vo.DMRC_Customer_CardVO;
 import com.uav.autodebit.vo.DataAdapterVO;
+import com.uav.autodebit.vo.LocalCacheVO;
 import com.uav.autodebit.vo.OxigenQuestionsVO;
+import com.uav.autodebit.vo.ServiceTypeVO;
 import com.uav.autodebit.volley.VolleyResponseListener;
 import com.uav.autodebit.volley.VolleyUtils;
 
@@ -65,6 +71,8 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
     CardView fetchbillcard;
 
     boolean valid=true;
+    String operatorListDate;
+    UAVProgressDialog pd;
 
 
     @Override
@@ -72,6 +80,9 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_electricity__bill);
         getSupportActionBar().hide();
+
+        operatorListDate=null;
+        pd=new UAVProgressDialog(this);
 
         amount=findViewById(R.id.amount);
         back_activity_button=findViewById(R.id.back_activity_button1);
@@ -87,12 +98,11 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
 
         fetchbillcard =findViewById(R.id.fetchbillcard);
 
-
         amountlayout.setVisibility(View.GONE);
+
         back_activity_button.setOnClickListener(this);
         proceed.setOnClickListener(this);
         fetchbill.setOnClickListener(this);
-
 
         operator.setClickable(false);
 
@@ -100,13 +110,27 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if(MotionEvent.ACTION_UP == motionEvent.getAction()) {
+                    operator.setEnabled(false);
                     //startActivity(new Intent(Mobile_Prepaid_Recharge_Service.this,Listview_With_Image.class));
-                    Intent intent =new Intent(Electricity_Bill.this, Listview_With_Image.class);
-                    Gson gson = new Gson();
-                    String data = gson.toJson(getDataList());
-                    intent.putExtra("datalist", data);
-                    intent.putExtra("title","Operator");
-                    startActivityForResult(intent,100);
+                    BackgroundAsyncService backgroundAsyncService = new BackgroundAsyncService(pd,true, new BackgroundServiceInterface() {
+                        @Override
+                        public void doInBackGround() {
+
+                            Gson gson = new Gson();
+                            operatorListDate = gson.toJson(getDataList());
+
+                        }
+                        @Override
+                        public void doPostExecute() {
+                            Intent intent =new Intent(Electricity_Bill.this, Listview_With_Image.class);
+                            intent.putExtra("datalist", operatorListDate);
+                            intent.putExtra("title","Operator");
+                            startActivityForResult(intent,100);
+
+
+                        }
+                    });
+                    backgroundAsyncService.execute();
                 }
                 return false;
             }
@@ -140,9 +164,12 @@ public class Electricity_Bill extends AppCompatActivity  implements View.OnClick
         super.onActivityResult(requestCode, resultCode, data);
 
         try{
+            operator.setEnabled(true);
+
             if(resultCode==RESULT_OK){
                 switch (requestCode) {
                     case 100:
+
                         operatorname =data.getStringExtra("operatorname");
                         operatorcode=data.getStringExtra("operator");
 
