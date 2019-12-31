@@ -162,6 +162,7 @@ public class Home extends AppCompatActivity
         // override local cache
              overrideLocalCache(customerVO);
         }catch (Exception e){
+            e.printStackTrace();
             Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
         }
 
@@ -581,6 +582,7 @@ public class Home extends AppCompatActivity
             backgroundAsyncService.execute();
         }catch (Exception e){
             if(view!=null)Utility.enableDisableView(view,true);
+            e.printStackTrace();
             Log.e("error_home",e.getMessage());
             Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 
@@ -689,6 +691,7 @@ public class Home extends AppCompatActivity
                                     }
                                 }));
                             }catch (Exception e){
+                                e.printStackTrace();
                                 Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 
                             }
@@ -718,6 +721,7 @@ public class Home extends AppCompatActivity
                                 try {
                                     startActivityForResult(new Intent(Home.this,Class.forName(getPackageName()+".Activity."+json_Service.getString("L_6"))).putExtra("onactivityresult",true),ApplicationConstant.REQ_AdditionalService_Add_More);
                                 } catch (Exception e) {
+                                    e.printStackTrace();
                                     Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 
                                 }
@@ -725,6 +729,7 @@ public class Home extends AppCompatActivity
                                 startActivityForResult(new Intent(Home.this,AdditionalService.class), ApplicationConstant.REQ_ALLSERVICE);
                             }
                         }catch (Exception e){
+                            e.printStackTrace();
                             Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 
                         }
@@ -748,6 +753,7 @@ public class Home extends AppCompatActivity
             }
         }catch (Exception e){
             if(view!=null)Utility.enableDisableView(view,true);
+            e.printStackTrace();
             Log.e("error_serviceClick",e.getMessage());
             Utility.exceptionAlertDialog(Home.this,"Alert!","Something went wrong, Please try again!","Report",Utility.getStackTrace(e));
 

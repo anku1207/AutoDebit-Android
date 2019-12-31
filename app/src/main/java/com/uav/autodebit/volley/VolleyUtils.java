@@ -74,7 +74,7 @@ public class VolleyUtils {
         pDialog.setCancelable(false);
         pDialog.setCanceledOnTouchOutside(false);
 
-        if(connectionVO.getLoaderAvoided()==null || !connectionVO.getLoaderAvoided())   pDialog.show();
+        if(connectionVO.getLoaderAvoided()==null || !connectionVO.getLoaderAvoided())  pDialog.show();
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (connectionVO.getRequestType(), ApplicationConstant.getHttpURL(context) + connectionVO.getMethodName() , jsonParams, new Response.Listener<JSONObject>() {
